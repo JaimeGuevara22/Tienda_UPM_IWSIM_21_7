@@ -20,16 +20,18 @@ public class ProductCatalog {
     }
 
     public boolean addProduct(Product product) {
-        for (int i = 0; i < products.length; i++) {
-            if (products[i] == null) {
-                products[i] = product;
-                return true;
-            }
-            if (producto.getId() == product.getId() || producto.getNombre().equals(product.getNombre())) {
-                return false;
-            }
-        }
-        return false;
+       for(int i = 0; i < this.products.length; i++) {
+           if(products[i] != null && products[i].getId() == product.getId() || (products[i].getNombre().equals(product.getNombre()))) {
+               return false;
+           }
+       }
+       for(int i = 0; i < this.products.length; i++) {
+           if(products[i] == null){
+               products[i] = product;
+               return true;
+           }
+       }
+       return false;
     }
 
     public boolean removeProduct(int id) {
@@ -59,4 +61,6 @@ public class ProductCatalog {
                 System.out.println(product.toString()); //Modificar si quitamos el toString de Productos
             }
         }
+
+    }
 }
