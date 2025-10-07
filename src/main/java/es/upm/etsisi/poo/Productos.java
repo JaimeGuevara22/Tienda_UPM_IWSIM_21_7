@@ -2,7 +2,7 @@ package es.upm.etsisi.poo;
 
 public class Productos {
 
-    private int id;
+    private int id; // mirar si poner en final y quitar el set porque el id de un producto es clave primaria y por tanto inmutable
     private String nombre;
     private double precio;
     private Category categoria;

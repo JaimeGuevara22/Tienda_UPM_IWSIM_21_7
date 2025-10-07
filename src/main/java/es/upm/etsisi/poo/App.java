@@ -1,11 +1,53 @@
 package es.upm.etsisi.poo;
 
-/**
- * Hello world!
- */
+import java.util.Scanner;
+
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Scanner sc = new Scanner(System.in);
+        boolean continuar = true;
+        Ticket ticket = new Ticket();
+        ProductCatalog catalog = new ProductCatalog();
+
+        System.out.println("Welcome to the ticket module App.");
+        System.out.println("Ticket module. Type 'help' to see commands.");
+
+        String prompt = "tUPM> ";
+
+        while(continuar){
+            System.out.print(prompt);
+            String input = sc.nextLine().trim();
+            if(input.isEmpty()){continue;}
+
+            if(input.equalsIgnoreCase("help")){
+                help();
+            }
+
+            else if(input.startsWith("echo")){
+                System.out.println(input);
+            }
+
+            else if(input.equalsIgnoreCase("exit")){
+                System.out.println("Closing application.");
+                System.out.println("Goodbye!");
+                continuar = false;
+            }
+
+            else if(input.startsWith("prod")){
+                prodCommand(input, catalog);
+            }
+
+            else if(input.startsWith("ticket")){
+                ticketCommand(input, ticket, catalog);
+            }
+
+        }
+        sc.close();
     }
-    //Prueba
+    private static void help() {
+    }
+    private static void prodCommand(String input, ProductCatalog catalog) {
+    }
+    private static void ticketCommand(String input, Ticket ticket, ProductCatalog catalog) {
+    }
 }

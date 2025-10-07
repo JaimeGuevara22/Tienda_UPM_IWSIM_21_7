@@ -35,7 +35,7 @@ public class TicketItem {
         return subtotal;
     }
 
-    public void setSubtotal (double subtotal) {
+    public void setSubtotal (double subtotal) { //creo que puede sobrar este set, porque subTotal no lo escribe el usuario
         this.subtotal = subtotal;
     }
 
