@@ -1,14 +1,17 @@
 package es.upm.etsisi.poo;
 
 public class TicketItem {
-    private Product product;
+
+    private Productos product;
     private int cantidad;
     private double subtotal;
 
-    public TicketItem (Product product, int cantidad, double subtotal) {
+    public TicketItem (Productos product, int cantidad) {
         this.product = product;
         this.cantidad = cantidad;
-        this.subtotal = subtotal;
+        if (cantidad > 1) {
+            this.subtotal = (product.getPrecio() * cantidad) * (1 - DiscountPolicy.getDiscountRate(product.getCategoria()));
+        } else this.subtotal = (product.getPrecio() * cantidad);
     }
 
     public int getCantidad() {
@@ -17,13 +20,14 @@ public class TicketItem {
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
+        actualizarSubtotal();
     }
 
-    public Product getProducto () {
+    public Productos getProducto () {
         return product;
     }
 
-    public void setProducto (Product product) {
+    public void setProducto (Productos product) {
         this.product = product;
     }
 
@@ -35,10 +39,16 @@ public class TicketItem {
         this.subtotal = subtotal;
     }
 
+    private void actualizarSubtotal() {
+        if (cantidad > 1) {
+            this.subtotal = (product.getPrecio() * cantidad) * (1 - DiscountPolicy.getDiscountRate(product.getCategoria()));
+        } else this.subtotal = (product.getPrecio() * cantidad);
+    }
+
     @Override
     public String toString() {
-        return "Producto: " + product.getNombre() +
-                ", Cantidad: " + cantidad +
-                ", Subtotal: " + getSubtotal();
+        StringBuilder sb = new StringBuilder();
+        sb.append(getProducto().toString()).append(" **discount -").append(DiscountPolicy.getDiscountRate(product.getCategoria()) * product.getPrecio());
+        return sb.toString();
     }
 }

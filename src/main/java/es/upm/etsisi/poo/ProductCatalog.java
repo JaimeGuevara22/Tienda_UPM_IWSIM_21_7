@@ -1,37 +1,36 @@
 package es.upm.etsisi.poo;
 
 public class ProductCatalog {
-    private Product[] products; //Mirar si en vez de array usar Lista
 
-    public ProductCatalog(Product[] products) {
+    private Productos[] products; //Mirar si en vez de array usar Lista
+
+    public ProductCatalog(Productos[] products) {
         this.products = products;
     }
 
     public ProductCatalog() {
-        this.products = new Product[200];  //Numero máximo de productos
+        this.products = new Productos[200];  //Numero máximo de productos
     }
 
-    public Product[] getProducts() {
+    public Productos[] getProducts() {
         return products;
     }
 
-    public void setProducts(Product[] products) {
+    public void setProducts(Productos[] products) {
         this.products = products;
     }
 
-    public boolean addProduct(Product product) {
-       for(int i = 0; i < this.products.length; i++) {
-           if(products[i] != null && products[i].getId() == product.getId() || (products[i].getNombre().equals(product.getNombre()))) {
-               return false;
-           }
-       }
-       for(int i = 0; i < this.products.length; i++) {
-           if(products[i] == null){
-               products[i] = product;
-               return true;
-           }
-       }
-       return false;
+    public boolean addProduct(Productos product) {
+        for (int i = 0; i < products.length; i++) {
+            if (products[i] == null) {
+                products[i] = product;
+                return true;
+            }
+            if (products[i].getId() == product.getId() || products[i].getNombre().equals(product.getNombre())) {
+                return false;
+            }
+        }
+        return false;
     }
 
     public boolean removeProduct(int id) {
@@ -56,11 +55,12 @@ public class ProductCatalog {
         return false;
     }
     public void listProducts() {
-        for (Product product : products) {
+        for (Productos product : products) {
             if (product != null) {
                 System.out.println(product.toString()); //Modificar si quitamos el toString de Productos
             }
         }
-
     }
+
+
 }

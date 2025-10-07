@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo;
 
 public class DiscountPolicy {
-    public double getDiscountRate (Category categoria) {
+    public static double getDiscountRate (Category categoria) {
         switch (categoria) {
             case MERCH:
                 return 0.00;
