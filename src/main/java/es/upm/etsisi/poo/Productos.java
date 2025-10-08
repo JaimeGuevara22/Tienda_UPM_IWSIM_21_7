@@ -9,8 +9,12 @@ public class Productos {
 
 
     public Productos(int id, String nombre, double precio, Category categoria) {
-        this.id = id;
-        this.nombre = nombre;
+        if (id > 0 && id <= 200) {
+         this.id = id;   
+        } else throw new IllegalArgumentException("Id no valido");
+        if (nombre.length() > 0 && nombre.length() <= 200) {
+            this.nombre = nombre;
+        } else throw new IllegalArgumentException("El nombre supera el maximo de caracteres validos");
         this.precio = precio;
         this.categoria = categoria;
     }
@@ -24,7 +28,9 @@ public class Productos {
     }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        if (nombre.length() > 0 && nombre.length() <= 200) {
+            this.nombre = nombre;
+        } else throw new IllegalArgumentException("El nombre supera el maximo de caracteres validos");
     }
 
     public double getPrecio() {
