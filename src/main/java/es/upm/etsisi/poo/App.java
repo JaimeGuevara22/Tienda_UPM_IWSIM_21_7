@@ -137,9 +137,6 @@ public class App {
                 }
             }
             case "remove" -> {
-                int id = Integer.parseInt(parts[1]);
-                catalog.removeProduct(id);
-                System.out.println("prod remove: ok");
             }
             default -> {
                 System.out.println("Unknown prod command.");
