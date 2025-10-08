@@ -3,6 +3,9 @@ package es.upm.etsisi.poo;
 import java.util.Scanner;
 
 public class App {
+
+    private static final String prompt="tUPM> ";
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         boolean continuar = true;
@@ -12,7 +15,6 @@ public class App {
         System.out.println("Welcome to the ticket module App.");
         System.out.println("Ticket module. Type 'help' to see commands.");
 
-        String prompt = "tUPM> ";
 
         while(continuar){
             System.out.print(prompt);
