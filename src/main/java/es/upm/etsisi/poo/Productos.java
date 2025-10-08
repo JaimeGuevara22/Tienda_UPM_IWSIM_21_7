@@ -23,9 +23,7 @@ public class Productos {
         return nombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
     public double getPrecio() {
         return precio;
@@ -49,9 +47,7 @@ public class Productos {
     @Override
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{class:").append(getClass()).append(", id:").append(getId()).append(", name:'").append(getNombre()).append("'").append(", category:").append(getCategoria()).append(", price:").append(getPrecio()).append("}");
-        return sb.toString();
+        return "{class:Product, id:" + id + ", name:'" + nombre + "', category:" + categoria + ", price:" + precio + "}";
     }
 }
 
