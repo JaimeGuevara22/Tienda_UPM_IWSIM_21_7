@@ -36,6 +36,7 @@ public class ProductCatalog {
     public boolean removeProduct(int id) {
         for (int i = 0; i < products.length; i++) {
             if (products[i] != null && products[i].getId() == id) {
+                System.out.println(products[i].toString());
                 products[i] = null;
                 return true;
             }

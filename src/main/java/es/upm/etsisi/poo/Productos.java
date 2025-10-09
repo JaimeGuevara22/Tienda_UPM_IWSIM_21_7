@@ -27,11 +27,15 @@ public class Productos {
         return nombre;
     }
 
+<<<<<<< HEAD
     public void setNombre(String nombre) {
         if (nombre.length() > 0 && nombre.length() <= 200) {
             this.nombre = nombre;
         } else throw new IllegalArgumentException("El nombre supera el maximo de caracteres validos");
     }
+=======
+    public void setNombre(String nombre) { this.nombre = nombre; }
+>>>>>>> 5d5cbc6858754adf68c330e0df233fffdbfe1c30
 
     public double getPrecio() {
         return precio;
@@ -55,9 +59,7 @@ public class Productos {
     @Override
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("{class:").append(getClass()).append(", id:").append(getId()).append(", name:'").append(getNombre()).append("'").append(", category:").append(getCategoria()).append(", price:").append(getPrecio()).append("}");
-        return sb.toString();
+        return "{class:Product, id:" + id + ", name:'" + nombre + "', category:" + categoria + ", price:" + precio + "}";
     }
 }
 

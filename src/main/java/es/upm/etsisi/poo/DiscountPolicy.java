@@ -5,13 +5,13 @@ public class DiscountPolicy {
         switch (categoria) {
             case MERCH:
                 return 0.00;
-            case PAPELERIA:
+            case STATIONERY:
                 return 0.05;
-            case ROPA:
+            case CLOTHES:
                 return 0.07;
-            case LIBRO:
+            case BOOK:
                 return 0.10;
-            case ELECTRONICA:
+            case ELECTRONICS:
                 return 0.03;
             default:
                 return 0.0;
