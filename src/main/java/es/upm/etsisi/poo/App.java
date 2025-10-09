@@ -162,5 +162,63 @@ public class App {
 
     }
     private static void ticketCommand(String input, Ticket ticket, ProductCatalog catalog) {
+
+        String[] parts = input.trim().split(" ");
+        String subcommand = parts[1];
+
+        switch (subcommand) {
+            case "add" -> {
+                if (parts.length != 4) {
+                    System.out.println("Ticket add: Error");
+                    break;
+                }
+                int productId = Integer.parseInt(parts[2]);
+                int quantity = Integer.parseInt(parts[3]);
+
+                Productos product = catalog.getProducts()[productId-1];
+
+                if (product == null) {
+                    System.out.println("Ticket add: Error -Product with ID " + (productId) + " not found.");
+                    break;
+                }
+
+
+                TicketItem newItem = new TicketItem(product, quantity);
+
+
+                if (ticket.addItem(newItem)) {
+                    ticket.printTicket();
+                    System.out.println("ticket add: ok");
+                    System.out.println();
+                } else {
+
+                    System.out.println("Ticket add: Error -Product cant be added");
+                }
+            }
+            case "remove" -> {
+
+                int prodId = Integer.parseInt(parts[2]);
+                if (ticket.removeItem(prodId)) {
+                    System.out.println("ticket remove: ok");
+                } else {
+                    System.out.println("Error: the product wasnt foud in the ticket.");
+                }
+            }
+            case "new" -> {  //No va
+                ticket = new Ticket();
+                System.out.println("ticket new: ok");
+                System.out.println();
+            }
+            case "print" -> {
+                ticket.printTicket();
+                System.out.println("ticket print: ok");
+                System.out.println();
+            }
+            default -> {
+                System.out.println("Unknown ticket command.");
+                System.out.println();
+            }
+        }
     }
+
 }
