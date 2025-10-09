@@ -115,7 +115,17 @@ public class App {
                 for (Productos product : products) {
                     if (product != null && product.getId() == id) {
                         switch (category) {
-                            case "NAME" -> product.setNombre(newValue);
+                            case "NAME" ->{
+                                StringBuilder nameBuilder = new StringBuilder();
+                                int i = 4;
+                                while (!parts[i].endsWith("\"")) {
+                                    nameBuilder.append(parts[i].replace("\"", "")).append(" ");
+                                    i++;
+                                }
+                                nameBuilder.append(parts[i].replace("\"", ""));
+                                newValue = nameBuilder.toString();
+                                product.setNombre(newValue);
+                            }
                             case "CATEGORY" -> product.setCategoria(Category.valueOf(newValue));
                             case "PRICE" -> product.setPrecio(Double.parseDouble(newValue));
                             default -> {
@@ -137,6 +147,13 @@ public class App {
                 }
             }
             case "remove" -> {
+                int id = Integer.parseInt(parts[2]);
+                if (catalog.removeProduct(id)) {
+                    System.out.println("prod remove: ok");
+                } else {
+                    System.out.println("Fail: product not removed");
+                }
+                System.out.println();
             }
             default -> {
                 System.out.println("Unknown prod command.");
