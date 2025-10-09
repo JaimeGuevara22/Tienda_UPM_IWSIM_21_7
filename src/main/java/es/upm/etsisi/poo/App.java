@@ -79,7 +79,7 @@ public class App {
                     StringBuilder nameBuilder = new StringBuilder();
                     int i = 3;
                     while (!parts[i].endsWith("\"")) {
-                        nameBuilder.append(parts[i]).append(" ");
+                        nameBuilder.append(parts[i].replace("\"", "")).append(" ");
                         i++;
                     }
                     nameBuilder.append(parts[i].replace("\"", ""));
