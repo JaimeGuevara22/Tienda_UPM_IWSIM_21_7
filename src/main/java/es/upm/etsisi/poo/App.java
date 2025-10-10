@@ -41,7 +41,7 @@ public class App {
             }
 
             else if(input.startsWith("ticket")){
-                ticketCommand(input, ticket, catalog);
+                ticketCommand(input, catalog);
             }
 
         }
@@ -178,7 +178,8 @@ public class App {
         System.out.println();
     }
     }
-    private static void ticketCommand(String input, Ticket ticket, ProductCatalog catalog) {
+    private static Ticket ticket = new Ticket();
+    private static void ticketCommand(String input, ProductCatalog catalog) {
 
         String[] parts = input.trim().split(" ");
         try {
@@ -222,7 +223,7 @@ public class App {
                         System.out.println("Error: the product wasn't foud in the ticket.");
                     }
                 }
-                case "new" -> {  //No va
+                case "new" -> {
                     ticket = new Ticket();
                     System.out.println("ticket new: ok");
                     System.out.println();
