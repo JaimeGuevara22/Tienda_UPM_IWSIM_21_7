@@ -6,10 +6,12 @@ public class App {
 
     private static final String prompt="tUPM> ";
 
+    private static Ticket ticket = new Ticket();
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         boolean continuar = true;
-        Ticket ticket = new Ticket();
+        ticket = new Ticket();
         ProductCatalog catalog = new ProductCatalog();
 
         System.out.println("Welcome to the ticket module App.");
@@ -74,11 +76,10 @@ public class App {
 
 
         switch (subcommand) {
-            case "add" -> { //Revisar lo de unir las partes entre comillas
+            case "add" -> {
 
                 int id = Integer.parseInt(parts[2]);
 
-                // Unir todas las partes del nombre que están entre comillas
                 StringBuilder nameBuilder = new StringBuilder();
                 int i = 3;
                 while (!parts[i].endsWith("\"")) {
@@ -178,7 +179,6 @@ public class App {
         System.out.println();
     }
     }
-    private static Ticket ticket = new Ticket();
     private static void ticketCommand(String input, ProductCatalog catalog) {
 
         String[] parts = input.trim().split(" ");
