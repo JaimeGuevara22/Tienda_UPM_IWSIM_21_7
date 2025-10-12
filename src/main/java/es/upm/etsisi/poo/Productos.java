@@ -27,15 +27,11 @@ public class Productos {
         return nombre;
     }
 
-<<<<<<< HEAD
     public void setNombre(String nombre) {
         if (nombre.length() > 0 && nombre.length() <= 200) {
             this.nombre = nombre;
         } else throw new IllegalArgumentException("El nombre supera el maximo de caracteres validos");
     }
-=======
-    public void setNombre(String nombre) { this.nombre = nombre; }
->>>>>>> 5d5cbc6858754adf68c330e0df233fffdbfe1c30
 
     public double getPrecio() {
         return precio;
