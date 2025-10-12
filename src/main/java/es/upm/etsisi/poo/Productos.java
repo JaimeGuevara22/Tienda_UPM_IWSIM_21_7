@@ -18,7 +18,6 @@ public class Productos {
         this.precio = precio;
         this.categoria = categoria;
     }
-
     public int getId() {
         return id;
     }

@@ -6,10 +6,12 @@ public class App {
 
     private static final String prompt="tUPM> ";
 
+    private static Ticket ticket = new Ticket();
+
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         boolean continuar = true;
-        Ticket ticket = new Ticket();
+        ticket = new Ticket();
         ProductCatalog catalog = new ProductCatalog();
 
         System.out.println("Welcome to the ticket module App.");
@@ -19,29 +21,30 @@ public class App {
         while(continuar){
             System.out.print(prompt);
             String input = sc.nextLine().trim();
+            String inputToLower = input.toLowerCase();
             if(input.isEmpty()){continue;}
 
             if(input.equalsIgnoreCase("help")){
                 help();
             }
 
-            else if(input.startsWith("echo")){
+            else if(inputToLower.startsWith("echo")){
                 System.out.println(input);
                 System.out.println();
             }
 
-            else if(input.equalsIgnoreCase("exit")){
+            else if(inputToLower.equalsIgnoreCase("exit")){
                 System.out.println("Closing application.");
                 System.out.println("Goodbye!");
                 continuar = false;
             }
 
-            else if(input.startsWith("prod")){
+            else if(inputToLower.startsWith("prod")){
                 prodCommand(input, catalog);
             }
 
-            else if(input.startsWith("ticket")){
-                ticketCommand(input, ticket, catalog);
+            else if(inputToLower.startsWith("ticket")){
+                ticketCommand(input, catalog);
             }
 
         }
@@ -68,34 +71,37 @@ public class App {
     }
     private static void prodCommand(String input, ProductCatalog catalog) {
     String[] parts = input.trim().split(" ");
-    String subcommand = parts[1];
+    try {
 
-        switch (subcommand) {
-            case "add" -> { //Revisar lo de unir las partes entre comillas
+        String subcommand = parts[1];
 
-                    int id = Integer.parseInt(parts[2]);
 
-                    // Unir todas las partes del nombre que están entre comillas
-                    StringBuilder nameBuilder = new StringBuilder();
-                    int i = 3;
-                    while (!parts[i].endsWith("\"")) {
-                        nameBuilder.append(parts[i].replace("\"", "")).append(" ");
-                        i++;
-                    }
-                    nameBuilder.append(parts[i].replace("\"", ""));
-                    String name = nameBuilder.toString();
+        switch (subcommand.toLowerCase()) {
+            case "add" -> {
+                int id = Integer.parseInt(parts[2]);
+                StringBuilder nameBuilder = new StringBuilder();
+                int i = 3;
+                while (!parts[i].endsWith("\"")) {
+                    nameBuilder.append(parts[i].replace("\"", "")).append(" ");
+                    i++;
+                }
+                nameBuilder.append(parts[i].replace("\"", ""));
+                String name = nameBuilder.toString();
+                String category = parts[i + 1];
+                double price = Double.parseDouble(parts[i + 2]);
 
-                    String category = parts[i + 1];
-                    double price = Double.parseDouble(parts[i + 2]);
-
-                    Productos product = new Productos(id, name, price, Category.valueOf(category));
+                try {
+                    Productos product = new Productos(id, name, price, Category.valueOf(category.toUpperCase()));
                     if (catalog.addProduct(product)) {
                         System.out.println(product);
                         System.out.println("prod add: ok");
                     } else {
                         System.out.println("Fail: product not added");
                     }
-                    System.out.println();
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Fail: product not added");
+                }
+                System.out.println();
 
             }
             case "list" -> {
@@ -107,37 +113,56 @@ public class App {
             case "update" -> {
                 int id = Integer.parseInt(parts[2]);
                 String category = parts[3].toUpperCase();
-                String newValue = parts[4];
+                String newValue;
+                if (category.equals("NAME")) { //en caso de que el nombre tenga más de una palabra
+                    StringBuilder sb = new StringBuilder();
+                    for (int j = 4; j < parts.length; j++) {
+                        if (j > 4) {
+                            sb.append(" ");
+                        }
+                        sb.append(parts[j]);
+                    }
+                    newValue = sb.toString();
+                } else {
+                    newValue = parts[4];
+                }
 
                 Productos[] products = catalog.getProducts();
                 boolean updated = false;
 
                 for (Productos product : products) {
                     if (product != null && product.getId() == id) {
-                        switch (category) {
-                            case "NAME" ->{
-                                StringBuilder nameBuilder = new StringBuilder();
-                                int i = 4;
-                                while (!parts[i].endsWith("\"")) {
-                                    nameBuilder.append(parts[i].replace("\"", "")).append(" ");
-                                    i++;
+                        try {
+                            switch (category) {
+                                case "NAME" -> {
+                                    StringBuilder nameBuilder = new StringBuilder();
+                                    int i = 4;
+                                    while (!parts[i].endsWith("\"")) {
+                                        nameBuilder.append(parts[i].replace("\"", "")).append(" ");
+                                        i++;
+                                    }
+                                    nameBuilder.append(parts[i].replace("\"", ""));
+                                    newValue = nameBuilder.toString();
+                                    product.setNombre(newValue);
                                 }
-                                nameBuilder.append(parts[i].replace("\"", ""));
-                                newValue = nameBuilder.toString();
-                                product.setNombre(newValue);
+                                case "CATEGORY" -> product.setCategoria(Category.valueOf(newValue.toUpperCase()));
+                                case "PRICE" -> product.setPrecio(Double.parseDouble(newValue));
+                                default -> {
+                                    System.out.println("Error: unknown field");
+                                    return;
+                                }
                             }
-                            case "CATEGORY" -> product.setCategoria(Category.valueOf(newValue));
-                            case "PRICE" -> product.setPrecio(Double.parseDouble(newValue));
-                            default -> {
-                                System.out.println("Error: unknown field");
-                                return;
-                            }
+                            System.out.println(product);
+                            System.out.println("prod update: ok");
+                            System.out.println();
+                            updated = true;
+                            break;
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Fail: invalid value for update (" + e.getMessage() + ")");
+                            System.out.println();
+                            updated = true;
+                            break;
                         }
-                        System.out.println(product);
-                        System.out.println("prod update: ok");
-                        System.out.println();
-                        updated = true;
-                        break;
                     }
                 }
 
@@ -159,8 +184,72 @@ public class App {
                 System.out.println("Unknown prod command.");
             }
         }
+    }catch (ArrayIndexOutOfBoundsException e){
+        System.out.println();
+    }
+    }
+    private static void ticketCommand(String input, ProductCatalog catalog) {
 
+        String[] parts = input.trim().split(" ");
+        try {
+            String subcommand = parts[1];
+
+            switch (subcommand.toLowerCase()) {
+                case "add" -> {
+                    if (parts.length != 4) {
+                        System.out.println("Ticket add: Error");
+                        break;
+                    }
+                    int productId = Integer.parseInt(parts[2]);
+                    int quantity = Integer.parseInt(parts[3]);
+
+                    Productos product = catalog.getProducts()[productId - 1];
+
+                    if (product == null) {
+                        System.out.println("Ticket add: Error -Product with ID " + (productId) + " not found.");
+                        break;
+                    }
+
+
+                    TicketItem newItem = new TicketItem(product, quantity);
+
+
+                    if (ticket.addItem(newItem)) {
+                        ticket.printTicket();
+                        System.out.println("ticket add: ok");
+                        System.out.println();
+                    } else {
+
+                        System.out.println("Ticket add: Error -Product cant be added");
+                    }
+                }
+                case "remove" -> {
+
+                    int prodId = Integer.parseInt(parts[2]);
+                    if (ticket.removeItem(prodId)) {
+                        System.out.println("ticket remove: ok");
+                    } else {
+                        System.out.println("Error: the product wasn't foud in the ticket.");
+                    }
+                }
+                case "new" -> {
+                    ticket = new Ticket();
+                    System.out.println("ticket new: ok");
+                    System.out.println();
+                }
+                case "print" -> {
+                    ticket.printTicket();
+                    System.out.println("ticket print: ok");
+                    System.out.println();
+                }
+                default -> {
+                    System.out.println("Unknown ticket command.");
+                    System.out.println();
+                }
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
+            System.out.println();
+        }
     }
-    private static void ticketCommand(String input, Ticket ticket, ProductCatalog catalog) {
-    }
+
 }

@@ -74,8 +74,8 @@ public class Ticket {
                 }
             }
             System.out.println("Total price: " + getTotalSinDescuento());
-            System.out.println("Total discount: " + (getTotalSinDescuento() - getTotalConDescuento()));
-            System.out.println("Final Price: " + getTotalConDescuento());
+            System.out.println("Total discount: " + String.format("%.2f", (getTotalSinDescuento() - getTotalConDescuento())));
+            System.out.println("Final Price: " + String.format("%.2f", getTotalConDescuento()));
         }
     }
 }
