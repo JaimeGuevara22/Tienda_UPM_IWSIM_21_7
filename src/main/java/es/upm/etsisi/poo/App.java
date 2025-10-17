@@ -83,15 +83,13 @@ public class App {
                     id = Integer.parseInt(parts[2]);
 
                     StringBuilder nameBuilder = new StringBuilder();
-                    int i = 3;
-                    while (!parts[i].endsWith("\"")) {
-                        nameBuilder.append(parts[i].replace("\"", "")).append(" ");
-                        i++;
-                    }
-                    nameBuilder.append(parts[i].replace("\"", ""));
+                    for (int i = 3; i < parts.length - 2; i++) {
+                        nameBuilder.append(parts[i].replace("\"", ""));
+                            nameBuilder.append(" ");
+                        }
                     String name = nameBuilder.toString();
-                    String category = parts[i + 1];
-                    double price = Double.parseDouble(parts[i + 2]);
+                    String category = parts[parts.length - 2];
+                    double price = Double.parseDouble(parts[parts.length - 1]);
 
                     try {
                         Productos product = new Productos(id, name, price, Category.valueOf(category.toUpperCase()));
