@@ -78,30 +78,37 @@ public class App {
 
         switch (subcommand.toLowerCase()) {
             case "add" -> {
-                int id = Integer.parseInt(parts[2]);
-                StringBuilder nameBuilder = new StringBuilder();
-                int i = 3;
-                while (!parts[i].endsWith("\"")) {
-                    nameBuilder.append(parts[i].replace("\"", "")).append(" ");
-                    i++;
-                }
-                nameBuilder.append(parts[i].replace("\"", ""));
-                String name = nameBuilder.toString();
-                String category = parts[i + 1];
-                double price = Double.parseDouble(parts[i + 2]);
-
+                int id;
                 try {
-                    Productos product = new Productos(id, name, price, Category.valueOf(category.toUpperCase()));
-                    if (catalog.addProduct(product)) {
-                        System.out.println(product);
-                        System.out.println("prod add: ok");
-                    } else {
+                    id = Integer.parseInt(parts[2]);
+
+                    StringBuilder nameBuilder = new StringBuilder();
+                    int i = 3;
+                    while (!parts[i].endsWith("\"")) {
+                        nameBuilder.append(parts[i].replace("\"", "")).append(" ");
+                        i++;
+                    }
+                    nameBuilder.append(parts[i].replace("\"", ""));
+                    String name = nameBuilder.toString();
+                    String category = parts[i + 1];
+                    double price = Double.parseDouble(parts[i + 2]);
+
+                    try {
+                        Productos product = new Productos(id, name, price, Category.valueOf(category.toUpperCase()));
+                        if (catalog.addProduct(product)) {
+                            System.out.println(product);
+                            System.out.println("prod add: ok");
+                        } else {
+                            System.out.println("Fail: product not added");
+                        }
+                    } catch (IllegalArgumentException e) {
                         System.out.println("Fail: product not added");
                     }
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Fail: product not added");
-                }
-                System.out.println();
+                    } catch (NumberFormatException e) {
+                        System.out.println("El id debe ser un dato tipo int. ");
+                    }
+
+                    System.out.println();
 
             }
             case "list" -> {

@@ -12,20 +12,35 @@ public class Ticket {
     }
 
     public boolean addItem(TicketItem item) {
-        if (items.size() >= 100 || item.getCantidad() <= 0) {
+
+        if (item.getCantidad() <= 0) {
             return false;
         }
-        Iterator<TicketItem> it = items.iterator();
-        while (it.hasNext()) {
-            TicketItem comprobador = it.next();
+
+        int totalActual = 0;
+        for (int i = 0; i < items.size(); i++) {
+            totalActual += items.get(i).getCantidad();
+        }
+
+        if (totalActual + item.getCantidad() > 100) {
+            return false;
+        }
+
+        for (int i = 0; i < items.size(); i++) {
+            TicketItem comprobador = items.get(i);
             if (comprobador.getProducto().getId() == item.getProducto().getId()) {
+                if (totalActual - comprobador.getCantidad() + comprobador.getCantidad() + item.getCantidad() > 100) {
+                    return false;
+                }
                 comprobador.setCantidad(comprobador.getCantidad() + item.getCantidad());
                 return true;
             }
         }
+
         items.add(item);
         return true;
     }
+
 
     public boolean removeItem(int productId) {
         Iterator<TicketItem> it = items.iterator();
@@ -63,7 +78,7 @@ public class Ticket {
 
     public void printTicket(){
         if (items.isEmpty()) {
-            System.out.println("Ticket vacío");
+            System.out.println("Empty ticket");
         } else {
             Iterator<TicketItem> it = items.iterator();
             TicketItem comp;
