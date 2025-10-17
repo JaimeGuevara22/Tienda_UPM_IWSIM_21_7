@@ -47,9 +47,14 @@ public class TicketItem {
 
     @Override
     public String toString() {
+        double discountAmount = 0.0;
+        if(cantidad > 1){
+            discountAmount = product.getPrecio() * cantidad * DiscountPolicy.getDiscountRate(product.getCategoria());
+        }else{
+            discountAmount = 0.0;
+        }
         StringBuilder sb = new StringBuilder();
-        sb.append(getProducto().toString()).append(" **discount -").append(String.format("%.2f",
-                DiscountPolicy.getDiscountRate(product.getCategoria()) * product.getPrecio()));
+        sb.append(getProducto().toString()).append(" **discount -").append(String.format("%.2f",discountAmount));
         return sb.toString();
     }
 }

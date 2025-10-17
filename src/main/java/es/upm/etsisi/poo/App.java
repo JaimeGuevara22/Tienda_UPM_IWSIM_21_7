@@ -78,36 +78,43 @@ public class App {
 
         switch (subcommand.toLowerCase()) {
             case "add" -> {
-                int id = Integer.parseInt(parts[2]);
-                StringBuilder nameBuilder = new StringBuilder();
-                int i = 3;
-                while (!parts[i].endsWith("\"")) {
-                    nameBuilder.append(parts[i].replace("\"", "")).append(" ");
-                    i++;
-                }
-                nameBuilder.append(parts[i].replace("\"", ""));
-                String name = nameBuilder.toString();
-                String category = parts[i + 1];
-                double price = Double.parseDouble(parts[i + 2]);
-
+                int id;
                 try {
-                    Productos product = new Productos(id, name, price, Category.valueOf(category.toUpperCase()));
-                    if (catalog.addProduct(product)) {
-                        System.out.println(product);
-                        System.out.println("Prod add: ok");
-                    } else {
+                    id = Integer.parseInt(parts[2]);
+
+                    StringBuilder nameBuilder = new StringBuilder();
+                    int i = 3;
+                    while (!parts[i].endsWith("\"")) {
+                        nameBuilder.append(parts[i].replace("\"", "")).append(" ");
+                        i++;
+                    }
+                    nameBuilder.append(parts[i].replace("\"", ""));
+                    String name = nameBuilder.toString();
+                    String category = parts[i + 1];
+                    double price = Double.parseDouble(parts[i + 2]);
+
+                    try {
+                        Productos product = new Productos(id, name, price, Category.valueOf(category.toUpperCase()));
+                        if (catalog.addProduct(product)) {
+                            System.out.println(product);
+                            System.out.println("prod add: ok");
+                        } else {
+                            System.out.println("Fail: product not added");
+                        }
+                    } catch (IllegalArgumentException e) {
                         System.out.println("Fail: product not added");
                     }
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Fail: product not added");
-                }
-                System.out.println();
+                    } catch (NumberFormatException e) {
+                        System.out.println("El id debe ser un dato tipo int. ");
+                    }
+
+                    System.out.println();
 
             }
             case "list" -> {
                 System.out.println("Catalog:");
                 catalog.listProducts();
-                System.out.println("Prod list: ok");
+                System.out.println("prod list: ok");
                 System.out.println();
             }
             case "update" -> {
@@ -153,7 +160,7 @@ public class App {
                                 }
                             }
                             System.out.println(product);
-                            System.out.println("Prod update: ok");
+                            System.out.println("prod update: ok");
                             System.out.println();
                             updated = true;
                             break;
@@ -174,7 +181,7 @@ public class App {
             case "remove" -> {
                 int id = Integer.parseInt(parts[2]);
                 if (catalog.removeProduct(id)) {
-                    System.out.println("Prod remove: ok");
+                    System.out.println("prod remove: ok");
                 } else {
                     System.out.println("Fail: product not removed");
                 }
@@ -216,11 +223,11 @@ public class App {
 
                     if (ticket.addItem(newItem)) {
                         ticket.printTicket();
-                        System.out.println("Ticket add: ok");
+                        System.out.println("ticket add: ok");
                         System.out.println();
                     } else {
 
-                        System.out.println("Ticket add: Error -Product can't be added");
+                        System.out.println("Ticket add: Error -Product cant be added");
                     }
                 }
                 case "remove" -> {
