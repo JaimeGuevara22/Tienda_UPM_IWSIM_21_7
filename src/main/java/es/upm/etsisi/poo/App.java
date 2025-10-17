@@ -103,7 +103,7 @@ public class App {
                         System.out.println("Fail: Product not added");
                     }
                     } catch (NumberFormatException e) {
-                        System.out.println("El id debe ser un dato tipo int. ");
+                        System.out.println("Fail: Product not added ");
                     }
                     System.out.println();
 
