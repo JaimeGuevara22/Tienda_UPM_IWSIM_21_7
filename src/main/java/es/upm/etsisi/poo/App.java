@@ -102,12 +102,11 @@ public class App {
                             System.out.println("Fail: product not added");
                         }
                     } catch (IllegalArgumentException e) {
-                        System.out.println("Fail: product not added");
+                        System.out.println("Fail: Product not added");
                     }
                     } catch (NumberFormatException e) {
                         System.out.println("El id debe ser un dato tipo int. ");
                     }
-
                     System.out.println();
 
             }

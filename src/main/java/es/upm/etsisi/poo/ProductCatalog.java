@@ -26,7 +26,7 @@ public class ProductCatalog {
                 products[i] = product;
                 return true;
             }
-            if (products[i].getId() == product.getId() || products[i].getNombre().equals(product.getNombre())) {
+            if (products[i].getId() == product.getId()) {
                 return false;
             }
         }
