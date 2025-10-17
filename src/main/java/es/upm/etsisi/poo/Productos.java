@@ -9,8 +9,9 @@ public class Productos {
 
 
     public Productos(int id, String nombre, double precio, Category categoria) {
-        if (id > 0 && id <= 200) {
+         if (id > 0 && id <= 200) {
          this.id = id;   
+        
         } else throw new IllegalArgumentException("Id no valido");
         if (nombre.length() > 0 && nombre.length() <= 200) {
             this.nombre = nombre;
