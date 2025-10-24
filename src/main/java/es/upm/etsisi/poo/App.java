@@ -6,6 +6,8 @@ public class App {
 
     private static final String prompt="tUPM> ";
 
+    private static ProductCatalog catalog = new ProductCatalog();
+
     private static Ticket ticket = new Ticket();
 
     public static void main(String[] args) {
@@ -40,7 +42,7 @@ public class App {
             }
 
             else if(inputToLower.startsWith("prod")){
-                prodCommand(input, catalog);
+                prodCommand(input);
             }
 
             else if(inputToLower.startsWith("ticket")){
@@ -69,7 +71,7 @@ public class App {
         );
         System.out.println();
     }
-    private static void prodCommand(String input, ProductCatalog catalog) {
+    private static void prodCommand(String input) {
     String[] parts = input.trim().split(" ");
     try {
 
