@@ -23,30 +23,31 @@ public class App {
         while(continuar){
             System.out.print(prompt);
             String input = sc.nextLine().trim();
-            String inputToLower = input.toLowerCase();
+            String [] parts = input.trim().split(" ");
+            String caso = parts[0];
             if(input.isEmpty()){continue;}
 
-            if(input.equalsIgnoreCase("help")){
+            if(caso.toLowerCase().equals("help")){
                 help();
             }
 
-            else if(inputToLower.startsWith("echo")){
+            else if(caso.toLowerCase().equals("echo")){
                 System.out.println(input);
                 System.out.println();
             }
 
-            else if(inputToLower.equalsIgnoreCase("exit")){
+            else if(caso.toLowerCase().equals("exit")){
                 System.out.println("Closing application.");
                 System.out.println("Goodbye!");
                 continuar = false;
             }
 
-            else if(inputToLower.startsWith("prod")){
+            else if(caso.toLowerCase().equals("prod")){
                 prodCommand(input);
             }
 
-            else if(inputToLower.startsWith("ticket")){
-                ticketCommand(input, catalog);
+            else if(caso.toLowerCase().equals("ticket")){
+                ticketCommand(input);
             }
 
         }
@@ -194,7 +195,7 @@ public class App {
         System.out.println();
     }
     }
-    private static void ticketCommand(String input, ProductCatalog catalog) {
+    private static void ticketCommand(String input) {
 
         String[] parts = input.trim().split(" ");
         try {
