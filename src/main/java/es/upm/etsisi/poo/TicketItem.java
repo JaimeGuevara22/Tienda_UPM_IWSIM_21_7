@@ -9,8 +9,9 @@ public class TicketItem {
     public TicketItem (Productos product, int cantidad) {
         this.product = product;
         this.cantidad = cantidad;
+        Category categoria = product.getCategoria();
         if (cantidad > 1) {
-            this.subtotal = (product.getPrecio() * cantidad) * (1 - DiscountPolicy.getDiscountRate(product.getCategoria()));
+            this.subtotal = (product.getPrecio() * cantidad) * (1 - product.getCategoria().getDiscount());
         } else this.subtotal = (product.getPrecio() * cantidad);
     }
 
@@ -41,7 +42,7 @@ public class TicketItem {
 
     private void actualizarSubtotal() {
         if (cantidad > 1) {
-            this.subtotal = (product.getPrecio() * cantidad) * (1 - DiscountPolicy.getDiscountRate(product.getCategoria()));
+            this.subtotal = (product.getPrecio() * cantidad) * (1 - product.getCategoria().getDiscount());
         } else this.subtotal = (product.getPrecio() * cantidad);
     }
 
@@ -49,7 +50,7 @@ public class TicketItem {
     public String toString() {
         double discountAmount = 0.0;
         if(cantidad > 1){
-            discountAmount = product.getPrecio() * cantidad * DiscountPolicy.getDiscountRate(product.getCategoria());
+            discountAmount = product.getPrecio() * cantidad * product.getCategoria().getDiscount();
         }else{
             discountAmount = 0.0;
         }
