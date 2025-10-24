@@ -1,5 +1,8 @@
 package es.upm.etsisi.poo;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 public class App {
@@ -11,47 +14,62 @@ public class App {
     private static Ticket ticket = new Ticket();
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+        Scanner sc = null;
         boolean continuar = true;
         ticket = new Ticket();
-        ProductCatalog catalog = new ProductCatalog();
+        try {
+            if (args.length > 0) {
+                String nombreFichero = args[0];
+                InputStream is = App.class.getResourceAsStream("/" + nombreFichero);
+                if (is != null) {
+                    sc = new Scanner(is);
+                } else {
+                    sc = new Scanner(new File(nombreFichero));
+                }
+            } else {
 
-        System.out.println("Welcome to the ticket module App.");
-        System.out.println("Ticket module. Type 'help' to see commands.");
-
-
-        while(continuar){
-            System.out.print(prompt);
-            String input = sc.nextLine().trim();
-            String [] parts = input.trim().split(" ");
-            String caso = parts[0];
-            if(input.isEmpty()){continue;}
-
-            if(caso.toLowerCase().equals("help")){
-                help();
+                System.out.println("Welcome to the ticket module App.");
+                System.out.println("Ticket module. Type 'help' to see commands.");
+                sc = new Scanner(System.in);
             }
 
-            else if(caso.toLowerCase().equals("echo")){
-                System.out.println(input);
-                System.out.println();
-            }
+            System.out.println("Welcome to the ticket module App.");
+            System.out.println("Ticket module. Type 'help' to see commands.");
 
-            else if(caso.toLowerCase().equals("exit")){
-                System.out.println("Closing application.");
-                System.out.println("Goodbye!");
-                continuar = false;
-            }
 
-            else if(caso.toLowerCase().equals("prod")){
-                prodCommand(input);
-            }
+            while (continuar) {
+                System.out.print(prompt);
+                String input = sc.nextLine().trim();
+                String[] parts = input.trim().split(" ");
+                String caso = parts[0];
+                if (input.isEmpty()) {
+                    continue;
+                }
 
-            else if(caso.toLowerCase().equals("ticket")){
-                ticketCommand(input);
-            }
+                if (caso.toLowerCase().equals("help")) {
+                    help();
+                } else if (caso.toLowerCase().equals("echo")) {
+                    System.out.println(input);
+                    System.out.println();
+                } else if (caso.toLowerCase().equals("exit")) {
+                    System.out.println("Closing application.");
+                    System.out.println("Goodbye!");
+                    continuar = false;
+                } else if (caso.toLowerCase().equals("prod")) {
+                    prodCommand(input);
+                } else if (caso.toLowerCase().equals("ticket")) {
+                    ticketCommand(input);
+                }
 
+            }
+            sc.close();
+        }catch (FileNotFoundException e) {
+            System.err.println("Error: File not found - " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (sc != null) sc.close();
         }
-        sc.close();
     }
     private static void help() {
         System.out.println(

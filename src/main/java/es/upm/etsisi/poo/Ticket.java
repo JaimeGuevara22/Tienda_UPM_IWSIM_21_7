@@ -80,7 +80,6 @@ public class Ticket {
         if (items.isEmpty()) {
             System.out.println("Empty ticket");
         } else {
-            // Crear una copia ordenada alfabéticamente por nombre de producto
             List<TicketItem> copiaOrdenada = new ArrayList<>(items);
 
             for (int i = 0; i < copiaOrdenada.size() - 1; i++) {
@@ -95,7 +94,6 @@ public class Ticket {
                 }
             }
 
-            // Imprimir con el mismo formato original
             Iterator<TicketItem> it = copiaOrdenada.iterator();
             TicketItem comp;
             while (it.hasNext()) {
