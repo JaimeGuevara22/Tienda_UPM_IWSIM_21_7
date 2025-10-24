@@ -76,11 +76,27 @@ public class Ticket {
     }
 
 
-    public void printTicket(){
+    public void printTicket() {
         if (items.isEmpty()) {
             System.out.println("Empty ticket");
         } else {
-            Iterator<TicketItem> it = items.iterator();
+            // Crear una copia ordenada alfabéticamente por nombre de producto
+            List<TicketItem> copiaOrdenada = new ArrayList<>(items);
+
+            for (int i = 0; i < copiaOrdenada.size() - 1; i++) {
+                for (int j = i + 1; j < copiaOrdenada.size(); j++) {
+                    String nombre1 = copiaOrdenada.get(i).getProducto().getNombre().toLowerCase();
+                    String nombre2 = copiaOrdenada.get(j).getProducto().getNombre().toLowerCase();
+                    if (nombre1.compareTo(nombre2) > 0) {
+                        TicketItem temp = copiaOrdenada.get(i);
+                        copiaOrdenada.set(i, copiaOrdenada.get(j));
+                        copiaOrdenada.set(j, temp);
+                    }
+                }
+            }
+
+            // Imprimir con el mismo formato original
+            Iterator<TicketItem> it = copiaOrdenada.iterator();
             TicketItem comp;
             while (it.hasNext()) {
                 comp = it.next();
@@ -88,6 +104,7 @@ public class Ticket {
                     System.out.println(comp);
                 }
             }
+
             System.out.println("Total price: " + String.format("%.2f", getTotalSinDescuento()));
             System.out.println("Total discount: " + String.format("%.2f", (getTotalSinDescuento() - getTotalConDescuento())));
             System.out.println("Final Price: " + String.format("%.2f", getTotalConDescuento()));
