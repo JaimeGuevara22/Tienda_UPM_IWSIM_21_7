@@ -3,6 +3,7 @@ package es.upm.etsisi.poo;
 public class Client extends User{
     private String dni;
     private String cashUp;
+
     public Client (String nombre, String dni, String email, String cashId){
         super(nombre, email);
         this.dni = dni;
@@ -16,6 +17,6 @@ public class Client extends User{
     }
     @Override
     public String toString(){
-        return  "\""+this.getNombre()+"\" "+ this.dni+" "+this.getEmail()+" "+this.cashUp;
+        return  "Client{identifier= '" + dni + "', name= '" + nombre +"', email= '" + email + "', cash= " + cashUp + "}";
     }
 }

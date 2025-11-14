@@ -14,12 +14,14 @@ public class ClientController {
         clients.add(client);
         return true;
     }
-    public void removeClient(String dni){
+    public boolean removeClient(String dni){
         for(Client c : clients){
             if(c.getDni().equals(dni)){
                 clients.remove(c);
+                return true;
             }
         }
+        return false;
     }
     public void list(){
         Collections.sort(clients, (c1, c2) -> c1.getNombre().compareToIgnoreCase(c2.getNombre()));

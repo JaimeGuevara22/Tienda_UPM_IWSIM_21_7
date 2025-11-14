@@ -9,15 +9,15 @@ public class Cash extends User{
         if(cashId == null){
             this.cashId = generarId();
         }else if(esValido(cashId)){
-                this.cashId = cashId;
+            this.cashId = cashId;
         }else{
             throw new IllegalArgumentException("El identificador de cash no es válido.");
         }
 
-        }
-        public String getCashId(){
-        return cashId;
-        }
+    }
+
+    public String getCashId(){return cashId; }
+
     private boolean esValido(String cashId){
         if(cashId.length() != 9) return false;
         if(!cashId.startsWith("UW")) return false;
@@ -36,4 +36,11 @@ public class Cash extends User{
         }
         return sb.toString();
     }
+
+    @Override
+    public String toString() {
+        return "Cash{identifier= " + cashId + ", name='" + this.getNombre() + "', email= '" + this.getEmail() + "'}";
+
+    }
 }
+
