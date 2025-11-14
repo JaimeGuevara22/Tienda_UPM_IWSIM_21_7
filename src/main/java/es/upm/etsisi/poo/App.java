@@ -137,6 +137,28 @@ public class App {
                     }
                     System.out.println();
 
+                }case "addfood" -> {
+                    int id;
+                    try {
+                        id = Integer.parseInt(parts[2]);
+
+                        StringBuilder nameBuilder = new StringBuilder();
+                        for (int i = 3; i < parts.length - 3; i++) {
+                            nameBuilder.append(parts[i].replace("\"", ""));
+                            nameBuilder.append(" ");
+                        }
+                        String name = nameBuilder.toString();
+                        double price = Double.parseDouble(parts[parts.length - 3]);
+
+
+                        //TODO falta hacer a partir de la fecha de expiración
+
+
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Fail: Product not added ");
+                    }
+                    System.out.println();
                 }
                 case "list" -> {
                     System.out.println("Catalog:");
