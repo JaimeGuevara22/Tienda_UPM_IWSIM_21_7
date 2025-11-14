@@ -1,14 +1,52 @@
 package es.upm.etsisi.poo;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-public class Ticket {
+import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
+public class Ticket {
+    private static final HashSet<String> idsUsados = new HashSet<>();
     private List<TicketItem> items;
+    private LocalDateTime fechaApertura;
+    private LocalDateTime fechaCierre;
+
+    private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+
+    private String ticketId;
 
     public Ticket() {
         this.items = new ArrayList<>();
+        this.fechaApertura = LocalDateTime.now();
+        this.ticketId = generarIdApertura();
+    }
+    private String generarIdApertura() {
+        String fecha = fechaApertura.format(formato);
+        String random = generarCadenaId();
+
+        String id = fecha + "-" + random;
+
+        while (idsUsados.contains(id)) {
+            random = generarCadenaId();
+            id = fecha + "-" + random;
+        }
+
+        idsUsados.add(id);
+        return id;
+    }
+    public void close() {
+        if (fechaCierre != null) return; // ya cerrado
+
+        this.fechaCierre = LocalDateTime.now();
+        String fechaClose = fechaCierre.format(formato);
+
+        String nuevoId = this.ticketId + "-" + fechaClose;
+
+        if (!idsUsados.add(nuevoId)) {
+            throw new RuntimeException("ERROR: identificador repetido al cerrar el ticket.");
+        }
+
+        idsUsados.remove(this.ticketId);
+        this.ticketId = nuevoId;
     }
 
     public boolean addItem(TicketItem item) {
@@ -107,6 +145,14 @@ public class Ticket {
             System.out.println("Total discount: " + String.format("%.2f", (getTotalSinDescuento() - getTotalConDescuento())));
             System.out.println("Final Price: " + String.format("%.2f", getTotalConDescuento()));
         }
+    }
+    private String generarCadenaId(){
+        Random randomNumber = new Random();
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < 5; i++){
+            sb.append(randomNumber.nextInt(10));
+        }
+        return sb.toString();
     }
 }
 
