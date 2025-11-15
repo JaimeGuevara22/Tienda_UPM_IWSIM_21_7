@@ -34,7 +34,7 @@ public class Ticket {
         return id;
     }
     public void close() {
-        if (fechaCierre != null) return; // ya cerrado
+        if (fechaCierre != null) return;
 
         this.fechaCierre = LocalDateTime.now();
         String fechaClose = fechaCierre.format(formato);

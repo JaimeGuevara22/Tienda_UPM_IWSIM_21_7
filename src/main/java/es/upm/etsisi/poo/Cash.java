@@ -39,7 +39,7 @@ public class Cash extends User{
 
     @Override
     public String toString() {
-        return "Cash{identifier= " + cashId + ", name='" + this.getNombre() + "', email= '" + this.getEmail() + "'}";
+        return "Cash{identifier= '" + cashId + "', name='" + this.getNombre() + "', email= '" + this.getEmail() + "'}";
 
     }
 }

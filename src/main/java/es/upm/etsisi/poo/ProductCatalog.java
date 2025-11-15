@@ -1,15 +1,18 @@
 package es.upm.etsisi.poo;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class ProductCatalog {
 
-    private Productos[] products; //Mirar si en vez de array usar Lista
+    private Productos[] products;
 
     public ProductCatalog(Productos[] products) {
         this.products = products;
     }
 
     public ProductCatalog() {
-        this.products = new Productos[200];  //Numero máximo de productos
+        this.products = new Productos[200];
     }
 
     public Productos[] getProducts() {
@@ -62,6 +65,11 @@ public class ProductCatalog {
             }
         }
     }
-
-
+    public boolean addFood(Food food) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime expirationDate = food.getExpirationDate();
+        long days = Duration.between(now, expirationDate).toDays();//me pasa la comparación de fechas a días
+        return false;
+        //comprobar que es mayor que 3 días para meterla o no
+    }
 }

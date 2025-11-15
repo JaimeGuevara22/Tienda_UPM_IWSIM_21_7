@@ -137,7 +137,7 @@ public class App {
                     }
                     System.out.println();
 
-                }case "addfood" -> {
+                }case "addFood" -> {
                     int id;
                     try {
                         id = Integer.parseInt(parts[2]);
@@ -236,9 +236,6 @@ public class App {
                     }
                     System.out.println();
                 }
-                case "addFood" -> {
-
-                }
                 case "addMeeting" -> {
 
                 }
@@ -257,7 +254,7 @@ public class App {
             String subcommand = parts[1];
 
             switch (subcommand.toLowerCase()) {
-                case "add" -> {
+                case "add" -> {//estas operaciones sólo se realizarán si se hacen por el mimso cajero que las abrió
                     if (parts.length != 4) {
                         System.out.println("Ticket add: Error");
                         break;
