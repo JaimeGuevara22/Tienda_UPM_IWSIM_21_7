@@ -292,7 +292,60 @@ public class App {
                     }
                 }
                 case "new" -> {
-                    ticket = new Ticket();
+                    Ticket t;
+                    String ticketId = null; // declaración previa para usar en toda la rama
+                    String cashId;
+                    String userId;
+
+
+                    if (parts.length == 4) {
+                        // Forma: ticket new <cashId> <userId>
+                        cashId = parts[2];
+                        userId = parts[3];
+
+
+                        // Crear ticket con ID automático
+                        t = new Ticket();
+                        ticketId = null; // poner con el getId falta crearlo
+
+
+                    } else if (parts.length == 5) {
+                        // Forma: ticket new <ticketId> <cashId> <userId>
+                        ticketId = parts[2]; // ID explícito
+                        cashId = parts[3];
+                        userId = parts[4];
+
+
+                        // Crear ticket con ID explícito
+                        t = new Ticket();//asignar ticketId dentro
+                    } else {
+                        System.out.println("ticket new: error - wrong number of arguments");
+                        break;
+                    }
+
+
+                    // Buscar la cash correspondiente
+                    Cash cash = listCash.findCashById(cashId);
+
+
+                    // Imprimir la línea inicial EXACTA
+                    System.out.println("ticket new " + ticketId + " " + cashId + " " + userId);
+
+
+                    // Asociar el ticket a la cash
+                    if (cash != null) {
+                        cash.addTicket(t);
+                    }
+
+
+                    // Imprimir ticket vacío
+                    System.out.println("Ticket : " + t);//debe ser t.getId()
+                    System.out.println("  Total price: 0.0");
+                    System.out.println("  Total discount: 0.0");
+                    System.out.println("  Final Price: 0.0");
+
+
+                    // Mensaje final
                     System.out.println("ticket new: ok");
                     System.out.println();
                 }

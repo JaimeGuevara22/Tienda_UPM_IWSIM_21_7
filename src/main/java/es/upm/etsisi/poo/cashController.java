@@ -31,5 +31,12 @@ public class cashController {
             System.out.println(c.toString());
         }
     }
-
+    public Cash findCashById(String id) {
+        for (Cash c : cashes) {
+            if (c != null && c.getCashId().equals(id)) {
+                return c;
+            }
+        }
+        return null;
+    }
 }
