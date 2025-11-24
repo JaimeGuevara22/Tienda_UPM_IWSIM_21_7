@@ -249,40 +249,57 @@ public class App {
     }
     private static void ticketCommand(String input) {
 
+
         String[] parts = input.trim().split(" ");
         try {
             String subcommand = parts[1];
 
+
             switch (subcommand.toLowerCase()) {
-                case "add" -> {//estas operaciones sólo se realizarán si se hacen por el mimso cajero que las abrió
-                    if (parts.length != 4) {
-                        System.out.println("Ticket add: Error");
-                        break;
-                    }
-                    int productId = Integer.parseInt(parts[2]);
-                    int quantity = Integer.parseInt(parts[3]);
-
-                    Productos product = catalog.getProducts()[productId - 1];
-
-                    if (product == null) {
-                        System.out.println("Ticket add: Error -Product with ID " + (productId) + " not found.");
-                        break;
-                    }
+                case "add" -> {  // Da mal, no funciona
+                    try {
+                        String ticketIdParam = parts[3];   // ID del ticket
+                        String cashId = parts[4];          // ID del cajero
+                        int productId = Integer.parseInt(parts[5]); // ID del producto
+                        int cantidad = Integer.parseInt(parts[6]);  // Cantidad
 
 
-                    TicketItem newItem = new TicketItem(product, quantity);
+                        // Verifica que sea el mismo ticket
+                        if (!ticket.getTicketId().equals(ticketIdParam)) {
+                            System.out.println("Ticket add: Error - ticket ID mismatch");
+                            break;
+                        }
 
 
-                    if (ticket.addItem(newItem)) {
+                        Productos product = catalog.getProducts()[productId - 1];
+                        if (product == null) {
+                            System.out.println("Ticket add: Error - product not found");
+                            break;
+                        }
+
+
+                        TicketItem newItem = new TicketItem(product, cantidad);
+                        if (!ticket.addItem(newItem)) {
+                            System.out.println("Ticket add: Error - cannot add product");
+                            break;
+                        }
+
+
+                        // Imprime el ticket completo con el ID correcto y descuentos
+                        System.out.println("Ticket : " + ticket.getTicketId());
                         ticket.printTicket();
+
+
                         System.out.println("ticket add: ok");
                         System.out.println();
-                    } else {
-
-                        System.out.println("Ticket add: Error -Product cant be added");
+                    } catch (Exception e) {
+                        System.out.println("Ticket add: Error - invalid parameters");
                     }
                 }
+
+
                 case "remove" -> {
+
 
                     int prodId = Integer.parseInt(parts[2]);
                     if (ticket.removeItem(prodId)) {
@@ -306,7 +323,7 @@ public class App {
 
                         // Crear ticket con ID automático
                         t = new Ticket();
-                        ticketId = null; // poner con el getId falta crearlo
+                        ticketId = t.getTicketId(); // asignar ID generado
 
 
                     } else if (parts.length == 5) {
@@ -317,7 +334,7 @@ public class App {
 
 
                         // Crear ticket con ID explícito
-                        t = new Ticket();//asignar ticketId dentro
+                        t = new Ticket();
                     } else {
                         System.out.println("ticket new: error - wrong number of arguments");
                         break;
@@ -339,7 +356,7 @@ public class App {
 
 
                     // Imprimir ticket vacío
-                    System.out.println("Ticket : " + t);//debe ser t.getId()
+                    System.out.println("Ticket : " + t.getTicketId());
                     System.out.println("  Total price: 0.0");
                     System.out.println("  Total discount: 0.0");
                     System.out.println("  Final Price: 0.0");
@@ -356,7 +373,9 @@ public class App {
                 }
                 case "list" -> {
 
+
                 }
+
 
                 default -> {
                     System.out.println("Unknown ticket command.");
@@ -367,6 +386,7 @@ public class App {
             System.out.println();
         }
     }
+
     private static void cashCommand(String input) {
         String[] parts = input.trim().split(" ");
         try {

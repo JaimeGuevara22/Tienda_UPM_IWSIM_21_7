@@ -154,5 +154,8 @@ public class Ticket {
         }
         return sb.toString();
     }
+    public String getTicketId() {
+        return ticketId;
+    }
 }
 
