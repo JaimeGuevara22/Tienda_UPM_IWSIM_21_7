@@ -24,13 +24,15 @@ public class ProductCatalog {
     }
 
     public boolean addProduct(Productos product) {
-        for (int i = 0; i < products.length; i++) {
-            if (products[i] == null) {
+        for(Productos p : products){
+            if(p != null && p.getId() == product.getId()){
+                return false;
+            }
+        }
+        for(int i = 0; i < products.length; i++ ){
+            if(products[i] == null){
                 products[i] = product;
                 return true;
-            }
-            if (products[i].getId() == product.getId()) {
-                return false;
             }
         }
         return false;
@@ -61,9 +63,22 @@ public class ProductCatalog {
     public void listProducts() {
         for (Productos product : products) {
             if (product != null) {
-                System.out.println(product.toString()); //Modificar si quitamos el toString de Productos
+                System.out.println(product.toString());
             }
         }
+    }
+    public boolean addTextToProduct(int id, String texto){
+        for(Productos p : products){
+            if(p != null && p.getId() == id){
+                if(p instanceof ProductosPersonalizables){
+                    ProductosPersonalizables productoPersonalizable = (ProductosPersonalizables) p;
+                    return productoPersonalizable.addTexto(texto);
+                }else{
+                    return false;
+                }
+            }
+        }
+        return false;
     }
     public boolean addFood(Food food) {
         LocalDateTime now = LocalDateTime.now();
