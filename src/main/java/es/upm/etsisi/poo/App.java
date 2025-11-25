@@ -55,7 +55,8 @@ public class App {
                 if (caso.toLowerCase().equals("help")) {
                     help();
                 } else if (caso.toLowerCase().equals("echo")) {
-                    System.out.println(input);
+                    String texto = input.substring(input.indexOf(" ") + 1); // quita la palabra "echo"
+                    System.out.println(texto);
                     System.out.println();
                 } else if (caso.toLowerCase().equals("exit")) {
                     System.out.println("Closing application.");
@@ -85,16 +86,26 @@ public class App {
     private static void help() {
         System.out.println(
                 "Commands:\n" +
+                        "  client add \"<nombre>\" <DNI> <email> <cashId>\n" +
+                        "  client remove <DNI>\n" +
+                        "  client list\n" +
+                        "  cash add [<id>] \"<nombre>\"<email>\n" +
+                        "  cash remove <id>\n" +
+                        "  cash list\n" +
+                        "  cash tickets <id>\n" +
+                        "  ticket new [<id>] <cashId> <userId>\n" +
+                        "  ticket add <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]\n" +
+                        "  ticket remove <ticketId><cashId> <prodId>\n" +
+                        "  ticket print <ticketId> <cashId>\n" +
+                        "  ticket list\n" +
                         "  prod add <id> \"<name>\" <category> <price>\n" +
-                        "  prod list\n" +
                         "  prod update <id> NAME|CATEGORY|PRICE <value>\n" +
+                        "  prod addFood [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n" +
+                        "  prod addMeeting [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n" +
+                        "  prod list\n" +
                         "  prod remove <id>\n" +
-                        "  ticket new\n" +
-                        "  ticket add <prodId> <quantity>\n" +
-                        "  ticket remove <prodId>\n" +
-                        "  ticket print\n" +
-                        "  echo \"<texto>\"\n" +
                         "  help\n" +
+                        "  echo \"<text>\"\n" +
                         "  exit\n\n" +
                         "Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS\n" +
                         "Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%."
@@ -309,60 +320,43 @@ public class App {
                     }
                 }
                 case "new" -> {
-                    Ticket t;
-                    String ticketId = null; // declaración previa para usar en toda la rama
+                    Ticket t = new Ticket();   // siempre creamos el ticket con ID autogenerado
                     String cashId;
                     String userId;
 
-
                     if (parts.length == 4) {
-                        // Forma: ticket new <cashId> <userId>
+                        // ticket new <cashId> <userId>
                         cashId = parts[2];
                         userId = parts[3];
-
-
-                        // Crear ticket con ID automático
-                        t = new Ticket();
-                        ticketId = t.getTicketId(); // asignar ID generado
-
-
                     } else if (parts.length == 5) {
-                        // Forma: ticket new <ticketId> <cashId> <userId>
-                        ticketId = parts[2]; // ID explícito
+                        // ticket new <ticketId> <cashId> <userId>
+                        String manualId = parts[2];
                         cashId = parts[3];
                         userId = parts[4];
 
-
-                        // Crear ticket con ID explícito
-                        t = new Ticket();
+                        // *** Sobrescribimos el ID generado automaticamente ***
+                        try {
+                            java.lang.reflect.Field f = Ticket.class.getDeclaredField("ticketId");
+                            f.setAccessible(true);
+                            f.set(t, manualId); // forzamos el ID manual
+                        } catch (Exception e) {
+                            System.out.println("ticket new: error - could not set manual ticketId");
+                            break;
+                        }
                     } else {
                         System.out.println("ticket new: error - wrong number of arguments");
                         break;
                     }
 
-
-                    // Buscar la cash correspondiente
+                    // Buscar la cash
                     Cash cash = listCash.findCashById(cashId);
+                    if (cash != null) cash.addTicket(t);
 
-
-                    // Imprimir la línea inicial EXACTA
-                    System.out.println("ticket new " + ticketId + " " + cashId + " " + userId);
-
-
-                    // Asociar el ticket a la cash
-                    if (cash != null) {
-                        cash.addTicket(t);
-                    }
-
-
-                    // Imprimir ticket vacío
+                    // Imprimir ticket
                     System.out.println("Ticket : " + t.getTicketId());
                     System.out.println("  Total price: 0.0");
                     System.out.println("  Total discount: 0.0");
                     System.out.println("  Final Price: 0.0");
-
-
-                    // Mensaje final
                     System.out.println("ticket new: ok");
                     System.out.println();
                 }
@@ -433,6 +427,33 @@ public class App {
 
                 }
                 case "tickets" -> {
+                    String cashId = parts[2];
+
+                    Cash cash = listCash.findCashById(cashId);
+                    if (cash == null) {
+                        System.out.println("Error: cash not found");
+                        System.out.println();
+                        break;
+                    }
+
+                    System.out.println("Tickets:");
+
+                    if (cash.getTickets().isEmpty()) {
+                        // No hay tickets asociados
+                        // (NO imprime nada más en la lista)
+                    } else {
+                        for (Ticket t : cash.getTickets()) {
+                            if (t.getItems().isEmpty()) {
+                                System.out.println("  " + t.getTicketId() + "->EMPTY");
+                            } else {
+                                System.out.println("  " + t.getTicketId() + "->" +
+                                        String.format("%.2f", t.getTotalConDescuento()));
+                            }
+                        }
+                    }
+
+                    System.out.println("cash tickets: ok");
+                    System.out.println();
 
 
                 }

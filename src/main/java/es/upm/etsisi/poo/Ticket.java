@@ -154,6 +154,11 @@ public class Ticket {
         }
         return sb.toString();
     }
+
+    public List<TicketItem> getItems() {
+        return items;
+    }
+
     public String getTicketId() {
         return ticketId;
     }
