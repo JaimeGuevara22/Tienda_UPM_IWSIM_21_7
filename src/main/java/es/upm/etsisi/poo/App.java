@@ -3,6 +3,7 @@ package es.upm.etsisi.poo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
@@ -39,9 +40,6 @@ public class App {
                 System.out.println("Ticket module. Type 'help' to see commands.");
                 sc = new Scanner(System.in);
             }
-
-            System.out.println("Welcome to the ticket module App.");
-            System.out.println("Ticket module. Type 'help' to see commands.");
 
 
             while (continuar) {
@@ -151,7 +149,7 @@ public class App {
                         }
                         String name = nameBuilder.toString();
                         double price = Double.parseDouble(parts[parts.length - 3]);
-                        LocalDateTime date = LocalDateTime.parse(parts[parts.length - 2]);
+                        LocalDate date = LocalDate.parse(parts[parts.length - 2]);
                         //TODO comprobar que pasa si metemos un long
                         int max_people = Integer.parseInt(parts[parts.length - 1]);
                         Food food = new Food(date, max_people, price, id, name);
@@ -161,8 +159,6 @@ public class App {
                         }else{
                             System.out.println("Error processing ->prod addFood ->Error adding product");
                         }
-
-
                     } catch (IllegalArgumentException e) {
                         System.out.println("Fail: the id is not valid");
                     }
@@ -244,7 +240,29 @@ public class App {
                     }
                     System.out.println();
                 }
-                case "addMeeting" -> {
+                case "addmeeting" -> {
+                    String id;
+                    try {
+                        id = (parts[2]);
+
+                        StringBuilder nameBuilder = new StringBuilder();
+                        for (int i = 3; i < parts.length - 3; i++) {
+                            nameBuilder.append(parts[i].replace("\"", ""));
+                            nameBuilder.append(" ");
+                        }
+                        String name = nameBuilder.toString();
+                        double price = Double.parseDouble(parts[parts.length - 3]);
+                        LocalDate date = LocalDate.parse(parts[parts.length - 2]);
+                        int max_people = Integer.parseInt(parts[parts.length - 1]);
+                        Meetings meetings = new Meetings(date, max_people, price, id, name);
+                        if (catalog.addMeetings(meetings)) {
+                            System.out.println(meetings);
+                            System.out.println("prod addMeeting: ok");
+                        } else {
+                            System.out.println("Error processing ->prod addMeeting ->Error adding product");
+                        }
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Fail: the id is not valid");
 
                 }
                 default -> {

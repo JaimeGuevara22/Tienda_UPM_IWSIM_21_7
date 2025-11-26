@@ -1,18 +1,22 @@
 package es.upm.etsisi.poo;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class ProductCatalog {
 
     private Productos[] products;
-
-    public ProductCatalog(Productos[] products) {
-        this.products = products;
-    }
+    private Food[] foods;
+    private Meetings[] meetings;
+    private int contador;
 
     public ProductCatalog() {
         this.products = new Productos[200];
+        this.foods = new Food[200];
+        this.meetings = new Meetings[200];
+        this.contador = 200;
     }
 
     public Productos[] getProducts() {
@@ -24,15 +28,20 @@ public class ProductCatalog {
     }
 
     public boolean addProduct(Productos product) {
-        for(Productos p : products){
-            if(p != null && p.getId() == product.getId()){
-                return false;
+        if(contador > 0) {
+
+            for (Productos p : products) {
+                if (p != null && p.getId() == product.getId()) {
+                    return false;
+                }
             }
-        }
-        for(int i = 0; i < products.length; i++ ){
-            if(products[i] == null){
-                products[i] = product;
-                return true;
+            for (int i = 0; i < products.length; i++) {
+                if (products[i] == null) {
+                    products[i] = product;
+                    contador--;
+                    return true;
+
+                }
             }
         }
         return false;
@@ -81,10 +90,31 @@ public class ProductCatalog {
         return false;
     }
     public boolean addFood(Food food) {
+        LocalDate now = LocalDate.now();
+        LocalDate expirationDate = food.getFoodExpirationDate();
+        long days = ChronoUnit.DAYS.between(now, expirationDate);
+        if(contador > 0) {
+
+            for (Food f : foods) {
+                if (f != null && f.getId() == f.getId()) {
+                    return false;
+                }
+            }
+            for (int i = 0; i < foods.length; i++) {
+                if (foods[i] == null && days >= 3) {
+                    foods[i] = food;
+                    contador--;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean addMeetings(Meetings meeting){
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expirationDate = food.getFoodExpirationDate();
-        long days = Duration.between(now, expirationDate).toDays();//me pasa la comparación de fechas a días
-        if(days < 3){
+        LocalDate expirationDate = meeting.getMeetingsExpirationDate();
+        long hours = ChronoUnit.HOURS.between(now, expirationDate);
+        if(hours < 12){
             return false;
         }else{
             return true;

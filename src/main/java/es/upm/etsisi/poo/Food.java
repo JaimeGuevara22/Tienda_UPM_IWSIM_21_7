@@ -1,16 +1,16 @@
 package es.upm.etsisi.poo;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Food extends ProductEvents{
-    public Food(LocalDateTime expirationDate, int numParticipants, double price, String id, String name) {
+    public Food(LocalDate expirationDate, int numParticipants, double price, String id, String name) {
         super(expirationDate, numParticipants, price, id, name);
     }
-    public LocalDateTime getFoodExpirationDate(){
+    public LocalDate getFoodExpirationDate(){
         return expirationDate;
     }
 
     @Override
     public String toString() {
-        return "{Class: Food "+ super.toString();
+        return "{Class:Food "+ super.toString();
     }
 }
