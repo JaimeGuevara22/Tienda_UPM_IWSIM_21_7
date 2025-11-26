@@ -138,7 +138,8 @@ public class App {
                     }
                     System.out.println();
 
-                }case "addFood" -> {
+                }
+                case "addFood" -> {
                     String id;
                     try {
                         id = (parts[2]);
@@ -154,10 +155,10 @@ public class App {
                         //TODO comprobar que pasa si metemos un long
                         int max_people = Integer.parseInt(parts[parts.length - 1]);
                         Food food = new Food(date, max_people, price, id, name);
-                        if(catalog.addFood(food)){
+                        if (catalog.addFood(food)) {
                             System.out.println(food);
                             System.out.println("prod addFood: ok");
-                        }else{
+                        } else {
                             System.out.println("Error processing ->prod addFood ->Error adding product");
                         }
                     } catch (IllegalArgumentException e) {
@@ -265,13 +266,17 @@ public class App {
                     } catch (IllegalArgumentException e) {
                         System.out.println("Fail: the id is not valid");
 
+                    }
                 }
                 default -> {
-                    System.out.println("Unknown prod command.");
+                        System.out.println("Unknown prod command.");
+                    }
                 }
-            }
-        }catch (ArrayIndexOutOfBoundsException e){
+
+
+        }catch(ArrayIndexOutOfBoundsException e){
             System.out.println();
+
         }
     }
     private static void ticketCommand(String input) {
