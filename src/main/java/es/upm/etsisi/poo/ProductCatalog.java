@@ -82,9 +82,12 @@ public class ProductCatalog {
     }
     public boolean addFood(Food food) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expirationDate = food.getExpirationDate();
+        LocalDateTime expirationDate = food.getFoodExpirationDate();
         long days = Duration.between(now, expirationDate).toDays();//me pasa la comparación de fechas a días
-        return false;
-        //comprobar que es mayor que 3 días para meterla o no
+        if(days < 3){
+            return false;
+        }else{
+            return true;
+        }
     }
 }

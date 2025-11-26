@@ -3,6 +3,7 @@ package es.upm.etsisi.poo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class App {
@@ -86,26 +87,16 @@ public class App {
     private static void help() {
         System.out.println(
                 "Commands:\n" +
-                        "  client add \"<nombre>\" <DNI> <email> <cashId>\n" +
-                        "  client remove <DNI>\n" +
-                        "  client list\n" +
-                        "  cash add [<id>] \"<nombre>\"<email>\n" +
-                        "  cash remove <id>\n" +
-                        "  cash list\n" +
-                        "  cash tickets <id>\n" +
-                        "  ticket new [<id>] <cashId> <userId>\n" +
-                        "  ticket add <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]\n" +
-                        "  ticket remove <ticketId><cashId> <prodId>\n" +
-                        "  ticket print <ticketId> <cashId>\n" +
-                        "  ticket list\n" +
                         "  prod add <id> \"<name>\" <category> <price>\n" +
-                        "  prod update <id> NAME|CATEGORY|PRICE <value>\n" +
-                        "  prod addFood [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n" +
-                        "  prod addMeeting [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n" +
                         "  prod list\n" +
+                        "  prod update <id> NAME|CATEGORY|PRICE <value>\n" +
                         "  prod remove <id>\n" +
+                        "  ticket new\n" +
+                        "  ticket add <prodId> <quantity>\n" +
+                        "  ticket remove <prodId>\n" +
+                        "  ticket print\n" +
+                        "  echo \"<texto>\"\n" +
                         "  help\n" +
-                        "  echo \"<text>\"\n" +
                         "  exit\n\n" +
                         "Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS\n" +
                         "Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%."
@@ -149,9 +140,9 @@ public class App {
                     System.out.println();
 
                 }case "addFood" -> {
-                    int id;
+                    String id;
                     try {
-                        id = Integer.parseInt(parts[2]);
+                        id = (parts[2]);
 
                         StringBuilder nameBuilder = new StringBuilder();
                         for (int i = 3; i < parts.length - 3; i++) {
@@ -160,14 +151,20 @@ public class App {
                         }
                         String name = nameBuilder.toString();
                         double price = Double.parseDouble(parts[parts.length - 3]);
+                        LocalDateTime date = LocalDateTime.parse(parts[parts.length - 2]);
+                        //TODO comprobar que pasa si metemos un long
+                        int max_people = Integer.parseInt(parts[parts.length - 1]);
+                        Food food = new Food(date, max_people, price, id, name);
+                        if(catalog.addFood(food)){
+                            System.out.println(food);
+                            System.out.println("prod addFood: ok");
+                        }else{
+                            System.out.println("Error processing ->prod addFood ->Error adding product");
+                        }
 
 
-                        //TODO falta hacer a partir de la fecha de expiración
-
-
-
-                    } catch (NumberFormatException e) {
-                        System.out.println("Fail: Product not added ");
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Fail: the id is not valid");
                     }
                     System.out.println();
                 }
@@ -320,43 +317,60 @@ public class App {
                     }
                 }
                 case "new" -> {
-                    Ticket t = new Ticket();   // siempre creamos el ticket con ID autogenerado
+                    Ticket t;
+                    String ticketId = null; // declaración previa para usar en toda la rama
                     String cashId;
                     String userId;
 
+
                     if (parts.length == 4) {
-                        // ticket new <cashId> <userId>
+                        // Forma: ticket new <cashId> <userId>
                         cashId = parts[2];
                         userId = parts[3];
+
+
+                        // Crear ticket con ID automático
+                        t = new Ticket();
+                        ticketId = t.getTicketId(); // asignar ID generado
+
+
                     } else if (parts.length == 5) {
-                        // ticket new <ticketId> <cashId> <userId>
-                        String manualId = parts[2];
+                        // Forma: ticket new <ticketId> <cashId> <userId>
+                        ticketId = parts[2]; // ID explícito
                         cashId = parts[3];
                         userId = parts[4];
 
-                        // *** Sobrescribimos el ID generado automaticamente ***
-                        try {
-                            java.lang.reflect.Field f = Ticket.class.getDeclaredField("ticketId");
-                            f.setAccessible(true);
-                            f.set(t, manualId); // forzamos el ID manual
-                        } catch (Exception e) {
-                            System.out.println("ticket new: error - could not set manual ticketId");
-                            break;
-                        }
+
+                        // Crear ticket con ID explícito
+                        t = new Ticket();
                     } else {
                         System.out.println("ticket new: error - wrong number of arguments");
                         break;
                     }
 
-                    // Buscar la cash
-                    Cash cash = listCash.findCashById(cashId);
-                    if (cash != null) cash.addTicket(t);
 
-                    // Imprimir ticket
+                    // Buscar la cash correspondiente
+                    Cash cash = listCash.findCashById(cashId);
+
+
+                    // Imprimir la línea inicial EXACTA
+                    System.out.println("ticket new " + ticketId + " " + cashId + " " + userId);
+
+
+                    // Asociar el ticket a la cash
+                    if (cash != null) {
+                        cash.addTicket(t);
+                    }
+
+
+                    // Imprimir ticket vacío
                     System.out.println("Ticket : " + t.getTicketId());
                     System.out.println("  Total price: 0.0");
                     System.out.println("  Total discount: 0.0");
                     System.out.println("  Final Price: 0.0");
+
+
+                    // Mensaje final
                     System.out.println("ticket new: ok");
                     System.out.println();
                 }
@@ -427,33 +441,6 @@ public class App {
 
                 }
                 case "tickets" -> {
-                    String cashId = parts[2];
-
-                    Cash cash = listCash.findCashById(cashId);
-                    if (cash == null) {
-                        System.out.println("Error: cash not found");
-                        System.out.println();
-                        break;
-                    }
-
-                    System.out.println("Tickets:");
-
-                    if (cash.getTickets().isEmpty()) {
-                        // No hay tickets asociados
-                        // (NO imprime nada más en la lista)
-                    } else {
-                        for (Ticket t : cash.getTickets()) {
-                            if (t.getItems().isEmpty()) {
-                                System.out.println("  " + t.getTicketId() + "->EMPTY");
-                            } else {
-                                System.out.println("  " + t.getTicketId() + "->" +
-                                        String.format("%.2f", t.getTotalConDescuento()));
-                            }
-                        }
-                    }
-
-                    System.out.println("cash tickets: ok");
-                    System.out.println();
 
 
                 }
