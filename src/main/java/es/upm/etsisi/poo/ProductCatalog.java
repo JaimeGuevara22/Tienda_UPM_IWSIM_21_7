@@ -96,7 +96,7 @@ public class ProductCatalog {
         if(contador > 0) {
 
             for (Food f : foods) {
-                if (f != null && f.getId() == f.getId()) {
+                if (f != null && f.getId() == food.getId()) {
                     return false;
                 }
             }
@@ -114,10 +114,20 @@ public class ProductCatalog {
         LocalDateTime now = LocalDateTime.now();
         LocalDate expirationDate = meeting.getMeetingsExpirationDate();
         long hours = ChronoUnit.HOURS.between(now, expirationDate);
-        if(hours < 12){
-            return false;
-        }else{
-            return true;
-        }
+        if(contador > 0){
+            for(Meetings m : meetings){
+                if(m != null && m.getId() == meeting.getId()){
+                    return false;
+                }
+            }
+            for(int i=0;i < meetings.length;i++){
+                if(meetings[i]==null && hours < 12){
+                    meetings[i] = meeting;
+                    contador--;
+                    return true;
+                }
+            }
+        }return false;
+
     }
 }
