@@ -1,14 +1,13 @@
 package es.upm.etsisi.poo;
 
-import javax.xml.catalog.Catalog;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
-
 import static java.util.Collections.sort;
 
 public class App {
@@ -21,12 +20,14 @@ public class App {
     private static cashController listCash = new cashController();
 
     private static ClientController listClient = new ClientController();
+    private static List<Ticket> listTicket = new ArrayList<Ticket>();
 
     public static void main(String[] args) {
         String ticketId = null;
+        String cashId = null;
         Scanner sc = null;
         boolean continuar = true;
-        ticket = new Ticket(ticketId);
+        ticket = new Ticket(ticketId, cashId);
         listCash = new cashController();
 
         try {
@@ -154,7 +155,6 @@ public class App {
                         String name = nameBuilder.toString();
                         double price = Double.parseDouble(parts[parts.length - 3]);
                         LocalDate date = LocalDate.parse(parts[parts.length - 2]);
-                        //TODO comprobar que pasa si metemos un long
                         int max_people = Integer.parseInt(parts[parts.length - 1]);
                         Food food = new Food(date, max_people, price, id, name);
                         if (catalog.addProduct(food)) {
@@ -193,7 +193,6 @@ public class App {
                             newValue = parts[4];
                         }
 
-                        // 1️⃣ Obtener el producto antes de actualizar
                         Productos product = catalog.getProductById(id);
 
                         if (product == null) {
@@ -201,11 +200,9 @@ public class App {
                             break;
                         }
 
-                        // 2️⃣ Actualizar el campo
                         boolean ok = catalog.updateField(id, field, newValue);
 
                         if (ok) {
-                            // 3️⃣ Imprimir el producto actualizado
                             System.out.println(product.toString());
                             System.out.println("prod update: ok\n");
                         } else {
@@ -298,7 +295,7 @@ public class App {
                             break;
                         }
 
-
+                        ticket.setState(TicketState.OPEN);
                         System.out.println("Ticket : " + ticket.getTicketId());
                         ticket.printTicket();
 
@@ -352,11 +349,12 @@ public class App {
                         System.out.println("Client not found");
                         return;
                     }
-                    Ticket t = new Ticket(id);
+                    Ticket t = new Ticket(id, cashId);
                     client.addTicket(t);
                     cash.addTicket(t);
 
                     ticket = t;
+                    listTicket.add(t);
 
                     System.out.println("Ticket : " + t.getTicketId());
                     System.out.println("  Total price: 0.0");
@@ -367,12 +365,21 @@ public class App {
                 }
                 case "print" -> {
                     ticket.printTicket();
+                    ticket.setState(TicketState.CLOSED);
                     System.out.println("ticket print: ok");
                     System.out.println();
                 }
                 case "list" -> {
-
-
+                    if(listTicket.isEmpty()){
+                        System.out.println("There is no tickets in the ticketList.");
+                        return;
+                    }
+                    List<Ticket> copia = new ArrayList<>(listTicket);
+                    copia.sort(Comparator.comparing(Ticket::getTicketId));
+                    for(Ticket t : copia){
+                        System.out.println(t.getTicketId()+ " - "+t.getState());
+                    }
+                    System.out.println("ticket list: ok");
                 }
 
 

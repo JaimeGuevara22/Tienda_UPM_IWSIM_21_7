@@ -10,14 +10,16 @@ public class Ticket {
     private LocalDateTime fechaApertura;
     private LocalDateTime fechaCierre;
     private TicketState state = TicketState.EMPTY;
+    private String cashId;
 
     private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
 
     private String ticketId;
 
-    public Ticket(String ticketId) {
+    public Ticket(String ticketId, String cashId) {
         this.items = new ArrayList<>();
         this.fechaApertura = LocalDateTime.now();
+        this.cashId = cashId;
         if(ticketId == null){
             this.ticketId = generarIdApertura();
         }else {
@@ -30,7 +32,7 @@ public class Ticket {
     }
     public void activate(){
         if(state == TicketState.EMPTY){
-            state = TicketState.ACTIVE;
+            state = TicketState.OPEN;
         }
     }
     private String generarIdApertura() {
@@ -180,6 +182,13 @@ public class Ticket {
     }
     public TicketState getState() {
         return state;
+    }
+    public void setState(TicketState state) {
+        this.state = state;
+
+    }
+    public String getCashId(){
+        return cashId;
     }
 }
 
