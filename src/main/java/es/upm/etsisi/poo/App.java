@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -90,16 +91,26 @@ public class App {
     private static void help() {
         System.out.println(
                 "Commands:\n" +
+                        "  client add \"<nombre>\" <DNI> <email> <cashID> \n"+
+                        "  client remove <DNI> \n"+
+                        "  client list \n"+
+                        "  cash add [<id>] \"<nombre>\" <email> \n"+
+                        "  cash remove <id> \n"+
+                        "  cash list \n"+
+                        "  cash tickets <id> \n"+
+                        "  ticket new [<id>] <cashID> <userID> \n" +
+                        "  ticket add <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]\n" +
+                        "  ticket remove <ticketId><cashId> <prodId>\n" +
+                        "  ticket print <ticketId> <cashId>\n" +
+                        "  ticket list \n"+
                         "  prod add <id> \"<name>\" <category> <price>\n" +
-                        "  prod list\n" +
                         "  prod update <id> NAME|CATEGORY|PRICE <value>\n" +
+                        "  prod addFood [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n"+
+                        "  prod addMeeting [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n"+
+                        "  prod list\n" +
                         "  prod remove <id>\n" +
-                        "  ticket new\n" +
-                        "  ticket add <prodId> <quantity>\n" +
-                        "  ticket remove <prodId>\n" +
-                        "  ticket print\n" +
-                        "  echo \"<texto>\"\n" +
                         "  help\n" +
+                        "  echo \"<texto>\"\n" +
                         "  exit\n\n" +
                         "Categories: MERCH, STATIONERY, CLOTHES, BOOK, ELECTRONICS\n" +
                         "Discounts if there are ≥2 units in the category: MERCH 0%, STATIONERY 5%, CLOTHES 7%, BOOK 10%, ELECTRONICS 3%."
@@ -164,10 +175,11 @@ public class App {
                             System.out.println("Error processing ->prod addFood ->Error adding product");
                         }
                     } catch (IllegalArgumentException e) {
-                        System.out.println("Fail: the id is not valid"+"Fail: " + e.getMessage() + "\n");
+                        System.out.println("Error processing ->prod addMeeting ->Error adding product");
 
                         System.out.println();
-
+                    }catch (DateTimeParseException e) {
+                        System.out.println("Error processing ->prod addFood ->Error adding product");
                     }
                 }case "list" -> {
                     System.out.println("Catalog:");
@@ -247,8 +259,11 @@ public class App {
                             System.out.println("Error processing ->prod addMeeting ->Error adding product");
                         }
                     } catch (IllegalArgumentException e) {
-                        System.out.println("Fail: the id is not valid");
+                        System.out.println("Error processing ->prod addMeeting ->Error adding product");
 
+
+                    }catch(DateTimeParseException e){
+                        System.out.println("Error processing ->prod addMeeting ->Error adding product");
                     }
                 }
                 default -> {
