@@ -5,7 +5,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Scanner;
+
+import static java.util.Collections.sort;
 
 public class App {
 
@@ -335,17 +339,17 @@ public class App {
                         clientId = parts[4];
                     }
                     else {
-                        System.out.println("ticket new: error de formato");
+                        System.out.println("Format error");
                         return;
                     }
                     Cash cash = listCash.findCashById(cashId);
                     if(cash == null){
-                        System.out.println("ticket new: cajero no encontrado");
+                        System.out.println("Cash not found");
                         return;
                     }
                     Client client = listClient.findClientByDNI(clientId);
                     if(client == null){
-                        System.out.println("ticket new: cliente no encontrado");
+                        System.out.println("Client not found");
                         return;
                     }
                     Ticket t = new Ticket(id);
@@ -394,7 +398,6 @@ public class App {
                     if (parts.length == 4) {
                         name = parts[2].replace("\"", "");
                         email = parts[3];
-
                     } else if (parts.length == 5) {
                         cashId = parts[2];
                         name = parts[3].replace("\"", "");
@@ -425,8 +428,22 @@ public class App {
 
                 }
                 case "tickets" -> {
-
-
+                    if(parts.length != 3) {
+                        System.out.println("Format error.");
+                        return;
+                    }
+                    String id = parts[2];
+                    Cash cash = listCash.findCashById(id);
+                    if(cash == null){
+                        System.out.println("Error: cash not found.");
+                        return;
+                    }
+                    List<Ticket> ticketsCash = cash.getTickets();
+                    ticketsCash.sort(Comparator.comparing(Ticket::getTicketId)); //para ordenar por id
+                    for(Ticket t : ticketsCash){
+                        System.out.println(t.getTicketId()+"->"+t.getState());
+                    }
+                    System.out.println("cash tickets: ok");
                 }
 
             }
@@ -443,22 +460,26 @@ public class App {
             String subcommand = parts[1];
             switch (subcommand.toLowerCase()) {
                 case "add" -> {
-                    String name = parts[2].replace("\"", "");
-                    String dni = parts[3];
-                    String email = parts[4];
-                    String cashId = parts[5];
-
-                    Client newClient = new Client(name, dni, email, cashId);
-                    if(listClient.addClient(newClient)) {
-                        System.out.println(newClient);
-                        System.out.println("client add: ok");
-                        System.out.println();
+                    if(parts.length != 6) {
+                        System.out.println("Format error.");
+                        return;
                     }
+                        String name = parts[2].replace("\"", "");
+                        String dni = parts[3];
+                        String email = parts[4];
+                        String cashId = parts[5];
+
+                        Client newClient = new Client(name, dni, email, cashId);
+                        if (listClient.addClient(newClient)) {
+                            System.out.println(newClient);
+                            System.out.println("client add: ok");
+                            System.out.println();
+                        }
 
                 }
                 case "remove" -> {
-                    String name = parts[2];
-                    if(listClient.removeClient(name)) {
+                    String dni = parts[2];
+                    if(listClient.removeClient(dni)) {
                         System.out.println("client remove: ok");
                     } else {
                         System.out.println("Error: the client wasn't found in the list.");

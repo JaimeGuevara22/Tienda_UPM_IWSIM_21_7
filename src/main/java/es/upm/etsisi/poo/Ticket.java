@@ -124,6 +124,7 @@ public class Ticket {
         while (it.hasNext()) {
             TicketItem comp = it.next();
             total += comp.getSubtotal();
+            Ticket ticket = null;
         }
         return total;
     }
@@ -176,6 +177,9 @@ public class Ticket {
 
     public String getTicketId() {
         return ticketId;
+    }
+    public TicketState getState() {
+        return state;
     }
 }
 
