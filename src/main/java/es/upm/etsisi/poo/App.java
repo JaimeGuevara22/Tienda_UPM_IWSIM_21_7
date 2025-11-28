@@ -270,38 +270,42 @@ public class App {
             switch (subcommand.toLowerCase()) {
                 case "add" -> {
                     try {
-                        String ticketId = parts[2];
-                        String cashId = parts[3];
-                        int productId = Integer.parseInt(parts[4]);
-                        int cantidad = Integer.parseInt(parts[5]);
-
-
-                        if (!ticket.getTicketId().equals(ticketId)) {
-                            System.out.println("Ticket add: Error - ticket ID mismatch");
+                        if(ticket.getState() == TicketState.CLOSED) {
+                            System.out.println("Ticket already closed");
                             break;
                         }
+                            String ticketId = parts[2];
+                            String cashId = parts[3];
+                            int productId = Integer.parseInt(parts[4]);
+                            int cantidad = Integer.parseInt(parts[5]);
 
 
-                        Productos product = catalog.getProductById(productId);
-                        if (product == null) {
-                            System.out.println("Ticket add: Error - product not found");
-                            break;
-                        }
+                            if (!ticket.getTicketId().equals(ticketId)) {
+                                System.out.println("Ticket add: Error - ticket ID mismatch");
+                                break;
+                            }
 
 
-                        TicketItem newItem = new TicketItem(product, cantidad);
-                        if (!ticket.addItem(newItem)) {
-                            System.out.println("Ticket add: Error - cannot add product");
-                            break;
-                        }
-
-                        ticket.setState(TicketState.OPEN);
-                        System.out.println("Ticket : " + ticket.getTicketId());
-                        ticket.printTicket();
+                            Productos product = catalog.getProductById(productId);
+                            if (product == null) {
+                                System.out.println("Ticket add: Error - product not found");
+                                break;
+                            }
 
 
-                        System.out.println("ticket add: ok");
-                        System.out.println();
+                            TicketItem newItem = new TicketItem(product, cantidad);
+                            if (!ticket.addItem(newItem)) {
+                                System.out.println("Ticket add: Error - cannot add product");
+                                break;
+                            }
+
+                            ticket.setState(TicketState.OPEN);
+                            System.out.println("Ticket : " + ticket.getTicketId());
+                            ticket.printTicket();
+
+
+                            System.out.println("ticket add: ok");
+                            System.out.println();
                     } catch (Exception e) {
                         System.out.println("Ticket add: Error - invalid parameters");
                     }
@@ -365,7 +369,6 @@ public class App {
                 }
                 case "print" -> {
                     ticket.printTicket();
-                    ticket.setState(TicketState.CLOSED);
                     System.out.println("ticket print: ok");
                     System.out.println();
                 }
