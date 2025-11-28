@@ -20,6 +20,7 @@ public abstract class ProductEvents {
         this.price = price;
         if(id.length() == 5){
             this.id = id;
+            throw new NumberFormatException("El id no es un número");
         }
         }
     }

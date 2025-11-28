@@ -29,4 +29,12 @@ public class ClientController {
             System.out.println(c.toString());
         }
     }
+    public Client findClientByDNI(String DNI) {
+        for (Client c : clients) {
+            if (c != null && c.getDni().equals(DNI)) {
+                return c;
+            }
+        }
+        return null;
+    }
 }

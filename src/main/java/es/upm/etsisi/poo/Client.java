@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo;
 
+import java.util.ArrayList;
+
 public class Client extends User{
     private String dni;
     private String cashUp;
@@ -18,5 +20,9 @@ public class Client extends User{
     @Override
     public String toString(){
         return  "Client{identifier= '" + dni + "', name= '" + nombre +"', email= '" + email + "', cash= " + cashUp + "}";
+    }
+    private ArrayList<Ticket> tickets = new ArrayList<>();
+    public void addTicket(Ticket t){
+        tickets.add(t);
     }
 }

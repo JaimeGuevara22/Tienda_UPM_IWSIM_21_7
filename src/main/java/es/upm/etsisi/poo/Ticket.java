@@ -9,15 +9,29 @@ public class Ticket {
     private List<TicketItem> items;
     private LocalDateTime fechaApertura;
     private LocalDateTime fechaCierre;
+    private TicketState state = TicketState.EMPTY;
 
     private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
 
     private String ticketId;
 
-    public Ticket() {
+    public Ticket(String ticketId) {
         this.items = new ArrayList<>();
         this.fechaApertura = LocalDateTime.now();
-        this.ticketId = generarIdApertura();
+        if(ticketId == null){
+            this.ticketId = generarIdApertura();
+        }else {
+            if (idsUsados.contains(ticketId)) {
+                throw new IllegalArgumentException("Error: Id ya usado.");
+            }
+            this.ticketId = ticketId;
+            idsUsados.add(ticketId);
+        }
+    }
+    public void activate(){
+        if(state == TicketState.EMPTY){
+            state = TicketState.ACTIVE;
+        }
     }
     private String generarIdApertura() {
         String fecha = fechaApertura.format(formato);
@@ -34,8 +48,9 @@ public class Ticket {
         return id;
     }
     public void close() {
-        if (fechaCierre != null) return;
+        if (state == TicketState.CLOSED) return;
 
+        state = TicketState.CLOSED;
         this.fechaCierre = LocalDateTime.now();
         String fechaClose = fechaCierre.format(formato);
 

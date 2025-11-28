@@ -4,26 +4,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Scanner;
-import java.time.LocalDate;
 
 public class App {
 
     private static final String prompt="tUPM> ";
 
     private static ProductCatalog catalog = new ProductCatalog();
-
-    private static Ticket ticket = new Ticket();
+    private static Ticket ticket;
 
     private static cashController listCash = new cashController();
 
     private static ClientController listClient = new ClientController();
 
     public static void main(String[] args) {
+        String ticketId = null;
         Scanner sc = null;
         boolean continuar = true;
-        ticket = new Ticket();
+        ticket = new Ticket(ticketId);
         listCash = new cashController();
 
         try {
@@ -138,8 +136,7 @@ public class App {
                     }
                     System.out.println();
 
-                }
-                case "addFood" -> {
+                }case "addFood" -> {
                     String id;
                     try {
                         id = (parts[2]);
@@ -155,10 +152,10 @@ public class App {
                         //TODO comprobar que pasa si metemos un long
                         int max_people = Integer.parseInt(parts[parts.length - 1]);
                         Food food = new Food(date, max_people, price, id, name);
-                        if (catalog.addFood(food)) {
+                        if(catalog.addFood(food)){
                             System.out.println(food);
                             System.out.println("prod addFood: ok");
-                        } else {
+                        }else{
                             System.out.println("Error processing ->prod addFood ->Error adding product");
                         }
                     } catch (IllegalArgumentException e) {
@@ -269,14 +266,11 @@ public class App {
                     }
                 }
                 default -> {
-                        System.out.println("Unknown prod command.");
-                    }
+                    System.out.println("Unknown prod command.");
                 }
-
-
-        }catch(ArrayIndexOutOfBoundsException e){
+            }
+        }catch (ArrayIndexOutOfBoundsException e){
             System.out.println();
-
         }
     }
     private static void ticketCommand(String input) {
@@ -341,62 +335,43 @@ public class App {
                     }
                 }
                 case "new" -> {
-                    Ticket t;
-                    String ticketId = null; // declaración previa para usar en toda la rama
+                    String id = null;
                     String cashId;
-                    String userId;
-
-
-                    if (parts.length == 4) {
-                        // Forma: ticket new <cashId> <userId>
+                    String clientId;
+                    if(parts.length == 3){
+                        cashId = parts[1];
+                        clientId = parts[2];
+                    }
+                    if(parts.length == 4){
+                        id = parts[1];
                         cashId = parts[2];
-                        userId = parts[3];
-
-
-                        // Crear ticket con ID automático
-                        t = new Ticket();
-                        ticketId = t.getTicketId(); // asignar ID generado
-
-
-                    } else if (parts.length == 5) {
-                        // Forma: ticket new <ticketId> <cashId> <userId>
-                        ticketId = parts[2]; // ID explícito
-                        cashId = parts[3];
-                        userId = parts[4];
-
-
-                        // Crear ticket con ID explícito
-                        t = new Ticket();
-                    } else {
-                        System.out.println("ticket new: error - wrong number of arguments");
-                        break;
+                        clientId = parts[3];
+                    }else{
+                        System.out.println("Error: invalid parameters");
+                        return;
                     }
-
-
-                    // Buscar la cash correspondiente
                     Cash cash = listCash.findCashById(cashId);
-
-
-                    // Imprimir la línea inicial EXACTA
-                    System.out.println("ticket new " + ticketId + " " + cashId + " " + userId);
-
-
-                    // Asociar el ticket a la cash
-                    if (cash != null) {
-                        cash.addTicket(t);
+                    if(cash == null){
+                        System.out.println("ticket new: cajero no encontrado");
+                        return;
                     }
+                    Client client = listClient.findClientByDNI(clientId);
+                    if(client == null){
+                        System.out.println("ticket new: cliente no encontrado");
+                        return;
+                    }
+                    Ticket t = new Ticket(id);
+                    client.addTicket(t);
+                    cash.addTicket(t);
 
+                    ticket = t;
 
-                    // Imprimir ticket vacío
                     System.out.println("Ticket : " + t.getTicketId());
                     System.out.println("  Total price: 0.0");
                     System.out.println("  Total discount: 0.0");
                     System.out.println("  Final Price: 0.0");
-
-
-                    // Mensaje final
                     System.out.println("ticket new: ok");
-                    System.out.println();
+
                 }
                 case "print" -> {
                     ticket.printTicket();
