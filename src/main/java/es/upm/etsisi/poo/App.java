@@ -309,7 +309,9 @@ public class App {
 
                 case "remove" -> {
                     int prodId = Integer.parseInt(parts[2]);
+                    Object removed = catalog.getProductById(prodId);
                     if (ticket.removeItem(prodId)) {
+                        System.out.println(removed.toString());
                         System.out.println("ticket remove: ok");
                     } else {
                         System.out.println("Error: the product wasn't found in the ticket.");
