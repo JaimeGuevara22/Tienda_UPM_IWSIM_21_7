@@ -282,16 +282,15 @@ public class App {
 
 
             switch (subcommand.toLowerCase()) {
-                case "add" -> {  // Da mal, no funciona
+                case "add" -> {
                     try {
-                        String ticketIdParam = parts[3];   // ID del ticket
-                        String cashId = parts[4];          // ID del cajero
-                        int productId = Integer.parseInt(parts[5]); // ID del producto
-                        int cantidad = Integer.parseInt(parts[6]);  // Cantidad
+                        String ticketId = parts[2];
+                        String cashId = parts[3];
+                        int productId = Integer.parseInt(parts[4]);
+                        int cantidad = Integer.parseInt(parts[5]);
 
 
-                        // Verifica que sea el mismo ticket
-                        if (!ticket.getTicketId().equals(ticketIdParam)) {
+                        if (!ticket.getTicketId().equals(ticketId)) {
                             System.out.println("Ticket add: Error - ticket ID mismatch");
                             break;
                         }
@@ -311,7 +310,6 @@ public class App {
                         }
 
 
-                        // Imprime el ticket completo con el ID correcto y descuentos
                         System.out.println("Ticket : " + ticket.getTicketId());
                         ticket.printTicket();
 
@@ -325,8 +323,6 @@ public class App {
 
 
                 case "remove" -> {
-
-
                     int prodId = Integer.parseInt(parts[2]);
                     if (ticket.removeItem(prodId)) {
                         System.out.println("ticket remove: ok");
@@ -424,9 +420,6 @@ public class App {
                         System.out.println("cash add: ok");
                         System.out.println();
                     }
-
-
-
                 }
                 case "remove" -> {
                     String cashId = parts[2];
