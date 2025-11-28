@@ -429,6 +429,7 @@ public class App {
 
                 }
                 case "list" -> {
+                    System.out.println("Cash: ");
                     listCash.list();
                     System.out.println("cash list: ok");
                     System.out.println();
@@ -447,6 +448,7 @@ public class App {
                     }
                     List<Ticket> ticketsCash = cash.getTickets();
                     ticketsCash.sort(Comparator.comparing(Ticket::getTicketId)); //para ordenar por id
+                    System.out.println("Tickets:");
                     for(Ticket t : ticketsCash){
                         System.out.println(t.getTicketId()+"->"+t.getState());
                     }
