@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public abstract class ProductEvents {
     protected LocalDate expirationDate;
+
     protected int numParticipants;
     protected double price;
     protected String id;
@@ -20,6 +21,8 @@ public abstract class ProductEvents {
         this.price = price;
         if(id.length() == 5){
             this.id = id;
+
+        }else{
             throw new NumberFormatException("El id no es un número");
         }
         }

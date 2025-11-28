@@ -9,6 +9,10 @@ public class Meetings extends ProductEvents {
     public LocalDate getMeetingsExpirationDate(){
         return expirationDate;
     }
+    @Override
+    public String toString() {
+        return "{Class:Meeting"+ super.toString();
+    }
 
 
 }

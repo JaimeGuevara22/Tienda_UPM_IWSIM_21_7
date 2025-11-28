@@ -2,132 +2,147 @@ package es.upm.etsisi.poo;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 public class ProductCatalog {
-
-    private Productos[] products;
-    private Food[] foods;
-    private Meetings[] meetings;
     private int contador;
+    private Object[] items;
 
     public ProductCatalog() {
-        this.products = new Productos[200];
-        this.foods = new Food[200];
-        this.meetings = new Meetings[200];
-        this.contador = 200;
+        this.items = new Object[200];
+        this.contador = 0;
     }
 
-    public Productos[] getProducts() {
-        return products;
-    }
-
-    public void setProducts(Productos[] products) {
-        this.products = products;
-    }
-
-    public boolean addProduct(Productos product) {
-        if(contador > 0) {
-
-            for (Productos p : products) {
-                if (p != null && p.getId() == product.getId()) {
-                    return false;
-                }
+    private int getIdFrom(Object item) {
+        try {
+            if (item instanceof Productos) {
+                return ((Productos) item).getId();
             }
-            for (int i = 0; i < products.length; i++) {
-                if (products[i] == null) {
-                    products[i] = product;
-                    contador--;
-                    return true;
+            if (item instanceof Food) {
+                return Integer.parseInt(((Food) item).getId());
+            }
+            if (item instanceof Meetings) {
+                return Integer.parseInt(((Meetings) item).getId());
+            }
+            return -1;
+        }catch (NumberFormatException e) {
+            return -1;
+        }
+    }
 
-                }
+    public Productos getProductById(int id) {
+        for (Object o : items) {
+            if (o instanceof Productos p && p.getId() == id) {
+                return p;
             }
         }
-        return false;
+        return null;
     }
 
-    public boolean removeProduct(int id) {
-        for (int i = 0; i < products.length; i++) {
-            if (products[i] != null && products[i].getId() == id) {
-                System.out.println(products[i].toString());
-                products[i] = null;
+    public boolean addProduct(Object item) {
+        if (contador >= 200) {
+            return false;
+        }
+        int id = getIdFrom(item);
+        if (id < 0) return false;
+        for (Object o : items) {
+            if (o != null && getIdFrom(o) == id) {
+                return false;
+            }
+        }
+        if (item instanceof Food) {
+            Food f = (Food) item;
+            long days = ChronoUnit.DAYS.between(LocalDate.now(), f.getFoodExpirationDate());
+            if (days < 3) return false;
+        }
+        if (item instanceof Meetings) {
+            Meetings m = (Meetings) item;
+            long dia = ChronoUnit.DAYS.between(LocalDate.now(), m.getMeetingsExpirationDate());
+            if (dia<0) return false;
+        }
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] == null) {
+                items[i] = item;
+                contador++;
+                return true;
+            }
+            if (getIdFrom(items[i]) > id) {
+                for (int j = items.length - 1; j > i; j--) {
+                    items[j] = items[j - 1];
+                }
+                items[i] = item;
+                contador++;
                 return true;
             }
         }
         return false;
     }
 
-    public boolean updateProduct(int id, String nombre, double precio, Category categoria) {
-        for (int i = 0; i < products.length; i++) {
-            if (products[i] != null && products[i].getId() == id) {
-                products[i].setNombre(nombre);
-                products[i].setPrecio(precio);
-                products[i].setCategoria(categoria);
+    public boolean remove(int id) {
+        for (int i = 0; i < items.length; i++) {
+            if (items[i] != null && getIdFrom(items[i]) == id) {
+                for (int j = i; j < items.length - 1; j++) {
+                    items[j] = items[j + 1];
+                }
+                items[items.length - 1] = null;
+                contador--;
                 return true;
             }
         }
         return false;
     }
+
+    public boolean updateField(int id, String field, String value) {
+        for (Object o : items) {
+            if (o == null) continue;
+            if (o instanceof Productos p && p.getId() == id) {
+                switch (field.toUpperCase()) {
+                    case "NAME" -> {
+                        p.setNombre(value);
+                        return true;
+                    }
+                    case "PRICE" -> {
+                        try {
+                            double price = Double.parseDouble(value);
+                            p.setPrecio(price);
+                            return true;
+                        } catch (NumberFormatException e) {
+                            return false;
+                        }
+                    }
+                    case "CATEGORY" -> {
+                        try {
+                            Category cat = Category.valueOf(value.toUpperCase());
+                            p.setCategoria(cat);
+                            return true;
+                        } catch (IllegalArgumentException e) {
+                            return false;
+                        }
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public void listProducts() {
-        for (Productos product : products) {
+        for (Object product : items) {
             if (product != null) {
                 System.out.println(product.toString());
             }
         }
     }
-    public boolean addTextToProduct(int id, String texto){
-        for(Productos p : products){
-            if(p != null && p.getId() == id){
-                if(p instanceof ProductosPersonalizables){
-                    ProductosPersonalizables productoPersonalizable = (ProductosPersonalizables) p;
-                    return productoPersonalizable.addTexto(texto);
-                }else{
-                    return false;
-                }
+
+    public boolean addTextToProduct(int id, String texto) {
+        for (Object o : items) {
+            if (o instanceof ProductosPersonalizables p && p.getId() == id) {
+                return p.addTexto(texto);
             }
         }
         return false;
-    }
-    public boolean addFood(Food food) {
-        LocalDate now = LocalDate.now();
-        LocalDate expirationDate = food.getFoodExpirationDate();
-        long days = ChronoUnit.DAYS.between(now, expirationDate);
-        if(contador > 0) {
-
-            for (Food f : foods) {
-                if (f != null && f.getId() == food.getId()) {
-                    return false;
-                }
-            }
-            for (int i = 0; i < foods.length; i++) {
-                if (foods[i] == null && days >= 3) {
-                    foods[i] = food;
-                    contador--;
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public boolean addMeetings(Meetings meeting){
-        LocalDateTime now = LocalDateTime.now();
-        LocalDate expirationDate = meeting.getMeetingsExpirationDate();
-        long hours = ChronoUnit.HOURS.between(now, expirationDate);
-        if(contador > 0){
-            for(Meetings m : meetings){
-                if(m != null && m.getId() == meeting.getId()){
-                    return false;
-                }
-            }
-            for(int i=0;i < meetings.length;i++){
-                if(meetings[i]==null && hours < 12){
-                    meetings[i] = meeting;
-                    contador--;
-                    return true;
-                }
-            }
-        }return false;
-
     }
 }

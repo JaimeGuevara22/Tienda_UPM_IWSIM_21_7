@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo;
 
+import javax.xml.catalog.Catalog;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -136,7 +137,7 @@ public class App {
                     }
                     System.out.println();
 
-                }case "addFood" -> {
+                }case "addfood" -> {
                     String id;
                     try {
                         id = (parts[2]);
@@ -152,87 +153,71 @@ public class App {
                         //TODO comprobar que pasa si metemos un long
                         int max_people = Integer.parseInt(parts[parts.length - 1]);
                         Food food = new Food(date, max_people, price, id, name);
-                        if(catalog.addFood(food)){
+                        if (catalog.addProduct(food)) {
                             System.out.println(food);
                             System.out.println("prod addFood: ok");
-                        }else{
+                        } else {
                             System.out.println("Error processing ->prod addFood ->Error adding product");
                         }
                     } catch (IllegalArgumentException e) {
-                        System.out.println("Fail: the id is not valid");
+                        System.out.println("Fail: the id is not valid"+"Fail: " + e.getMessage() + "\n");
+
+                        System.out.println();
+
                     }
-                    System.out.println();
-                }
-                case "list" -> {
+                }case "list" -> {
                     System.out.println("Catalog:");
                     catalog.listProducts();
                     System.out.println("prod list: ok");
                     System.out.println();
                 }
                 case "update" -> {
-                    int id = Integer.parseInt(parts[2]);
-                    String category = parts[3].toUpperCase();
-                    String newValue;
-                    if (category.equals("NAME")) { //en caso de que el nombre tenga más de una palabra
-                        StringBuilder sb = new StringBuilder();
-                        for (int j = 4; j < parts.length; j++) {
-                            if (j > 4) {
-                                sb.append(" ");
+                    try {
+                        int id = Integer.parseInt(parts[2]);
+                        String field = parts[3].toUpperCase();
+                        String newValue;
+
+                        // Si el NAME tiene espacios o comillas
+                        if (field.equals("NAME")) {
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = 4; i < parts.length; i++) {
+                                if (i > 4) sb.append(" ");
+                                sb.append(parts[i].replace("\"", ""));
                             }
-                            sb.append(parts[j]);
+                            newValue = sb.toString();
+                        } else {
+                            newValue = parts[4];
                         }
-                        newValue = sb.toString();
-                    } else {
-                        newValue = parts[4];
-                    }
 
-                    Productos[] products = catalog.getProducts();
-                    boolean updated = false;
+                        // 1️⃣ Obtener el producto antes de actualizar
+                        Productos product = catalog.getProductById(id);
 
-                    for (Productos product : products) {
-                        if (product != null && product.getId() == id) {
-                            try {
-                                switch (category) {
-                                    case "NAME" -> {
-                                        StringBuilder nameBuilder = new StringBuilder();
-                                        int i = 4;
-                                        while (!parts[i].endsWith("\"")) {
-                                            nameBuilder.append(parts[i].replace("\"", "")).append(" ");
-                                            i++;
-                                        }
-                                        nameBuilder.append(parts[i].replace("\"", ""));
-                                        newValue = nameBuilder.toString();
-                                        product.setNombre(newValue);
-                                    }
-                                    case "CATEGORY" -> product.setCategoria(Category.valueOf(newValue.toUpperCase()));
-                                    case "PRICE" -> product.setPrecio(Double.parseDouble(newValue));
-                                    default -> {
-                                        System.out.println("Error: unknown field");
-                                        return;
-                                    }
-                                }
-                                System.out.println(product);
-                                System.out.println("prod update: ok");
-                                System.out.println();
-                                updated = true;
-                                break;
-                            } catch (IllegalArgumentException e) {
-                                System.out.println("Fail: invalid value for update (" + e.getMessage() + ")");
-                                System.out.println();
-                                updated = true;
-                                break;
-                            }
+                        if (product == null) {
+                            System.out.println("Fail: product not found\n");
+                            break;
                         }
-                    }
 
-                    if (!updated) {
-                        System.out.println("Fail: product not found");
-                        System.out.println();
+                        // 2️⃣ Actualizar el campo
+                        boolean ok = catalog.updateField(id, field, newValue);
+
+                        if (ok) {
+                            // 3️⃣ Imprimir el producto actualizado
+                            System.out.println(product.toString());
+                            System.out.println("prod update: ok\n");
+                        } else {
+                            System.out.println("Fail: invalid value or field\n");
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println("Fail: invalid parameters\n");
                     }
                 }
+
                 case "remove" -> {
                     int id = Integer.parseInt(parts[2]);
-                    if (catalog.removeProduct(id)) {
+                    Object removed = catalog.getProductById(id);
+                    if (catalog.remove(id)) {
+                        System.out.println(removed.toString());
                         System.out.println("prod remove: ok");
                     } else {
                         System.out.println("Fail: product not removed");
@@ -254,7 +239,7 @@ public class App {
                         LocalDate date = LocalDate.parse(parts[parts.length - 2]);
                         int max_people = Integer.parseInt(parts[parts.length - 1]);
                         Meetings meetings = new Meetings(date, max_people, price, id, name);
-                        if (catalog.addMeetings(meetings)) {
+                        if (catalog.addProduct(meetings)) {
                             System.out.println(meetings);
                             System.out.println("prod addMeeting: ok");
                         } else {
@@ -296,7 +281,7 @@ public class App {
                         }
 
 
-                        Productos product = catalog.getProducts()[productId - 1];
+                        Productos product = catalog.getProductById(productId);
                         if (product == null) {
                             System.out.println("Ticket add: Error - product not found");
                             break;
