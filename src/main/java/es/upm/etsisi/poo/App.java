@@ -338,16 +338,21 @@ public class App {
                     String id = null;
                     String cashId;
                     String clientId;
-                    if(parts.length == 3){
-                        cashId = parts[1];
-                        clientId = parts[2];
+                    if (parts.length == 3) {
+                        System.out.println("ticket new: error de formato");
+                        return;
                     }
-                    if(parts.length == 4){
-                        id = parts[1];
+                    else if (parts.length == 4) {
                         cashId = parts[2];
                         clientId = parts[3];
-                    }else{
-                        System.out.println("Error: invalid parameters");
+                    }
+                    else if (parts.length == 5) {
+                        id = parts[2];
+                        cashId = parts[3];
+                        clientId = parts[4];
+                    }
+                    else {
+                        System.out.println("ticket new: error de formato");
                         return;
                     }
                     Cash cash = listCash.findCashById(cashId);
