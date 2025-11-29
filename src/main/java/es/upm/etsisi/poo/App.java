@@ -285,52 +285,54 @@ public class App {
             switch (subcommand.toLowerCase()) {
                 case "add" -> {
                     try {
-                        if(ticket.getState() == TicketState.CLOSED) {
+                        if (ticket.getState() == TicketState.CLOSED) {
                             System.out.println("Ticket already closed");
                             break;
                         }
-                            String ticketId = parts[2];
-                            String cashId = parts[3];
-                            int productId = Integer.parseInt(parts[4]);
-                            int cantidad = Integer.parseInt(parts[5]);
 
+                        String ticketId = parts[2];
+                        String cashId = parts[3];
+                        String itemId = parts[4];   // Puede ser Producto, Food o Meeting
+                        int cantidad = Integer.parseInt(parts[5]);
 
-                            if (!ticket.getTicketId().equals(ticketId)) {
-                                System.out.println("Ticket add: Error - ticket ID mismatch");
-                                break;
-                            }
+                        if (!ticket.getTicketId().equals(ticketId)) {
+                            System.out.println("Ticket add: Error - ticket ID mismatch");
+                            break;
+                        }
 
+                        // Buscar item en el catálogo (Productos, Food o Meetings)
+                        Object item = catalog.getProductById(Integer.parseInt(itemId));
+                        if (item == null) {
+                            System.out.println("Ticket add: Error - item not found");
+                            break;
+                        }
 
-                            Productos product = catalog.getProductById(productId);
-                            if (product == null) {
-                                System.out.println("Ticket add: Error - product not found");
-                                break;
-                            }
+                        // Comprobar límite de 100 items
+                        if (ticket.getItemsCount() + cantidad > 100) {
+                            System.out.println("Ticket add: Error - cannot add, exceeds maximum 100 items per ticket");
+                            break;
+                        }
 
+                        TicketItem newItem = new TicketItem(item, cantidad);
+                        if (!ticket.addItem(newItem)) {
+                            System.out.println("Ticket add: Error - cannot add item");
+                            break;
+                        }
 
-                            TicketItem newItem = new TicketItem(product, cantidad);
-                            if (!ticket.addItem(newItem)) {
-                                System.out.println("Ticket add: Error - cannot add product");
-                                break;
-                            }
+                        ticket.setState(TicketState.OPEN);
+                        System.out.println("Ticket: " + ticket.getTicketId());
+                        ticket.printTicket();
+                        System.out.println("ticket add: ok\n");
 
-                            ticket.setState(TicketState.OPEN);
-                            System.out.println("Ticket : " + ticket.getTicketId());
-                            ticket.printTicket();
-
-
-                            System.out.println("ticket add: ok");
-                            System.out.println();
                     } catch (Exception e) {
                         System.out.println("Ticket add: Error - invalid parameters");
                     }
                 }
 
-
                 case "remove" -> {
                     int prodId = Integer.parseInt(parts[parts.length - 1]);
                     Object removed = catalog.getProductById(prodId);
-                    if (ticket.removeItem(prodId)) {
+                    if (ticket.removeItem(String.valueOf(prodId))) {
                         System.out.println("Ticket: "+ticket.getTicketId());
                         ticket.printTicket();
                         System.out.println("ticket remove: ok");
@@ -419,24 +421,30 @@ public class App {
             String subcommand = parts[1];
             switch (subcommand.toLowerCase()) {
                 case "add" -> {
-                    String cashId = null;
-                    String name = null;
-                    String email = null;
-                    if (parts.length == 4) {
-                        name = parts[2].replace("\"", "");
-                        email = parts[3];
-                    } else if (parts.length == 5) {
-                        cashId = parts[2];
-                        name = parts[3].replace("\"", "");
-                        email = parts[4];
-                    }
+                    try {
+                        String cashId = null;
+                        String name = null;
+                        String email = null;
+                        if (parts.length == 4) {
+                            name = parts[2].replace("\"", "");
+                            email = parts[3];
+                        } else if (parts.length == 5) {
+                            cashId = parts[2];
+                            name = parts[3].replace("\"", "");
+                            email = parts[4];
+                        }
 
-                    Cash newCash = new Cash(name,email, cashId);
-                    if(listCash.addCash(newCash)) {
-                        System.out.println(newCash);
-                        System.out.println("cash add: ok");
+                        Cash newCash = new Cash(name, email, cashId);
+                        if (listCash.addCash(newCash)) {
+                            System.out.println(newCash);
+
+                            System.out.println("cash add: ok");
+                            System.out.println();
+                        }
+                    }catch (IllegalArgumentException e){
                         System.out.println();
-                    }
+
+                        }
                 }
                 case "remove" -> {
                     String cashId = parts[2];

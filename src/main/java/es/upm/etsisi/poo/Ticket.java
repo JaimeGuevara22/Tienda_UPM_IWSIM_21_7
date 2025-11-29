@@ -6,20 +6,21 @@ import java.time.format.DateTimeFormatter;
 
 public class Ticket {
     private static final HashSet<String> idsUsados = new HashSet<>();
-    private List<TicketItem> items;
+    private TicketItem[] items;
     private LocalDateTime fechaApertura;
     private LocalDateTime fechaCierre;
     private TicketState state = TicketState.EMPTY;
     private String cashId;
-
+    private int contador;
     private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
 
     private String ticketId;
 
     public Ticket(String ticketId, String cashId) {
-        this.items = new ArrayList<>();
+        this.items = new TicketItem[100];
         this.fechaApertura = LocalDateTime.now();
         this.cashId = cashId;
+        this.contador=0;
         if(ticketId == null){
             this.ticketId = generarIdApertura();
         }else {
@@ -68,102 +69,81 @@ public class Ticket {
 
     public boolean addItem(TicketItem item) {
 
-        if (item.getCantidad() <= 0) {
+        if(contador+item.getCantidad()> items.length){
             return false;
         }
-
-        int totalActual = 0;
-        for (int i = 0; i < items.size(); i++) {
-            totalActual += items.get(i).getCantidad();
-        }
-
-        if (totalActual + item.getCantidad() > 100) {
-            return false;
-        }
-
-        for (int i = 0; i < items.size(); i++) {
-            TicketItem comprobador = items.get(i);
-            if (comprobador.getProducto().getId() == item.getProducto().getId()) {
-                if (totalActual - comprobador.getCantidad() + comprobador.getCantidad() + item.getCantidad() > 100) {
-                    return false;
-                }
-                comprobador.setCantidad(comprobador.getCantidad() + item.getCantidad());
-                return true;
-            }
-        }
-
-        items.add(item);
+        items[contador++] = item;
         return true;
     }
 
 
-    public boolean removeItem(int productId) {
-        Iterator<TicketItem> it = items.iterator();
-        while (it.hasNext()) {
-            TicketItem comp = it.next();
-            if (comp.getProducto().getId() == productId) {
-                it.remove();
+
+    public boolean removeItem(String id) {
+        for (int i = 0; i < contador; i++) {
+            if (items[i].getId().equals(id)) {
+                items[i] = items[contador - 1]; // Reemplazamos por el último
+                items[contador - 1] = null;
+                contador--;
                 return true;
             }
-
         }
         return false;
     }
 
     public double getTotalSinDescuento() {
-        Iterator<TicketItem> it = items.iterator();
-        double total = 0.00;
-        while (it.hasNext()) {
-            TicketItem comp = it.next();
-            total += comp.getProducto().getPrecio() * comp.getCantidad();
+        double total = 0.0;
+        for (int i = 0; i < contador; i++) {
+            TicketItem ti = items[i];
+            total += ti.getPrecio(ti.getItem()) * ti.getCantidad();
         }
         return total;
-    }
-
-    public double getTotalConDescuento() {
-        Iterator<TicketItem> it = items.iterator();
-        double total = 0.00;
-        while (it.hasNext()) {
-            TicketItem comp = it.next();
-            total += comp.getSubtotal();
-            Ticket ticket = null;
+    }public double getTotalConDescuento() {
+        double total = 0.0;
+        for (int i = 0; i < contador; i++) {
+            TicketItem ti = items[i];
+            total += ti.getSubtotal();
         }
         return total;
+
+
     }
-
-
     public void printTicket() {
-        if (items.isEmpty()) {
+        if (contador == 0) {  // No hay items en el ticket
             System.out.println("Empty ticket");
-        } else {
-            System.out.println("Tickets: "+ticketId);
-            List<TicketItem> copiaOrdenada = new ArrayList<>(items);
-
-            for (int i = 0; i < copiaOrdenada.size() - 1; i++) {
-                for (int j = i + 1; j < copiaOrdenada.size(); j++) {
-                    String nombre1 = copiaOrdenada.get(i).getProducto().getNombre().toLowerCase();
-                    String nombre2 = copiaOrdenada.get(j).getProducto().getNombre().toLowerCase();
-                    if (nombre1.compareTo(nombre2) > 0) {
-                        TicketItem temp = copiaOrdenada.get(i);
-                        copiaOrdenada.set(i, copiaOrdenada.get(j));
-                        copiaOrdenada.set(j, temp);
-                    }
-                }
-            }
-
-            Iterator<TicketItem> it = copiaOrdenada.iterator();
-            TicketItem comp;
-            while (it.hasNext()) {
-                comp = it.next();
-                for (int i = 0; i < comp.getCantidad(); i++) {
-                    System.out.println(comp);
-                }
-            }
-
-            System.out.println("Total price: " + String.format("%.2f", getTotalSinDescuento()));
-            System.out.println("Total discount: " + String.format("%.2f", (getTotalSinDescuento() - getTotalConDescuento())));
-            System.out.println("Final Price: " + String.format("%.2f", getTotalConDescuento()));
+            return;
         }
+
+        System.out.println("Ticket: " + ticketId);
+
+        // Hacer copia para ordenar por nombre
+        TicketItem[] copia = new TicketItem[contador];
+        for (int i = 0; i < contador; i++) {
+            copia[i] = items[i];
+        }
+
+        // Ordenar por nombre (toLowerCase)
+        for (int i = 0; i < copia.length - 1; i++) {
+            for (int j = i + 1; j < copia.length; j++) {
+                String nombre1 = getNombre(copia[i]).toLowerCase();
+                String nombre2 = getNombre(copia[j]).toLowerCase();
+                if (nombre1.compareTo(nombre2) > 0) {
+                    TicketItem temp = copia[i];
+                    copia[i] = copia[j];
+                    copia[j] = temp;
+                }
+            }
+        }
+
+        // Imprimir cada item según su cantidad
+        for (TicketItem ti : copia) {
+            for (int k = 0; k < ti.getCantidad(); k++) {
+                System.out.println(ti);
+            }
+        }
+
+        System.out.println("Total price: " + String.format("%.2f", getTotalSinDescuento()));
+        System.out.println("Total discount: " + String.format("%.2f", getTotalSinDescuento() - getTotalConDescuento()));
+        System.out.println("Final Price: " + String.format("%.2f", getTotalConDescuento()));
     }
     private String generarCadenaId(){
         Random randomNumber = new Random();
@@ -174,9 +154,14 @@ public class Ticket {
         return sb.toString();
     }
 
-    public List<TicketItem> getItems() {
-        return items;
+    private String getNombre(TicketItem ti) {
+        Object item = ti.getItem();
+        if (item instanceof Productos p) return p.getNombre();
+        if (item instanceof Food f) return f.getNombre();
+        if (item instanceof Meetings m) return m.getNombre();
+        return "";
     }
+
 
     public String getTicketId() {
         return ticketId;
@@ -190,6 +175,10 @@ public class Ticket {
     }
     public String getCashId(){
         return cashId;
+    }
+
+    public int getItemsCount() {
+        return contador;
     }
 }
 

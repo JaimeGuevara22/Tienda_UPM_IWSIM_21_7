@@ -30,6 +30,12 @@ public abstract class ProductEvents {
     public String getId(){
         return id;
     }
+    public double getPrice() {
+        return price;
+    }
+    public String getNombre(){
+        return name;
+    }
     @Override
     public String toString(){
         return ", id: "+id+", name: "+name+", price: "+price+" date of event: "+expirationDate+", max people allowed: "+numParticipants+"}";
