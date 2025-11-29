@@ -136,6 +136,7 @@ public class Ticket {
         if (items.isEmpty()) {
             System.out.println("Empty ticket");
         } else {
+            System.out.println("Tickets: "+ticketId);
             List<TicketItem> copiaOrdenada = new ArrayList<>(items);
 
             for (int i = 0; i < copiaOrdenada.size() - 1; i++) {
@@ -158,8 +159,6 @@ public class Ticket {
                     System.out.println(comp);
                 }
             }
-
-            state = TicketState.CLOSED;
 
             System.out.println("Total price: " + String.format("%.2f", getTotalSinDescuento()));
             System.out.println("Total discount: " + String.format("%.2f", (getTotalSinDescuento() - getTotalConDescuento())));

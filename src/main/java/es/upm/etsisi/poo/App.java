@@ -328,10 +328,11 @@ public class App {
 
 
                 case "remove" -> {
-                    int prodId = Integer.parseInt(parts[2]);
+                    int prodId = Integer.parseInt(parts[parts.length - 1]);
                     Object removed = catalog.getProductById(prodId);
                     if (ticket.removeItem(prodId)) {
-                        System.out.println(removed.toString());
+                        System.out.println("Ticket: "+ticket.getTicketId());
+                        ticket.printTicket();
                         System.out.println("ticket remove: ok");
                     } else {
                         System.out.println("Error: the product wasn't found in the ticket.");
@@ -383,6 +384,7 @@ public class App {
 
                 }
                 case "print" -> {
+                    ticket.close();
                     ticket.printTicket();
                     System.out.println("ticket print: ok");
                     System.out.println();
