@@ -124,36 +124,54 @@ public class App {
 
             switch (subcommand.toLowerCase()) {
                 case "add" -> {
-                    int id;
                     try {
-                        id = Integer.parseInt(parts[2]);
+                        // ID siempre es la segunda palabra
+                        int id = Integer.parseInt(parts[2]);
 
-                        StringBuilder nameBuilder = new StringBuilder();
-                        for (int i = 3; i < parts.length - 2; i++) {
-                            nameBuilder.append(parts[i].replace("\"", ""));
-                            nameBuilder.append(" ");
+                        // Extraer el nombre entre comillas
+                        int firstQuote = input.indexOf('"');
+                        int lastQuote = input.lastIndexOf('"');
+                        if (firstQuote == -1 || lastQuote == -1 || lastQuote == firstQuote) {
+                            System.out.println("Fail: invalid name format");
+                            break;
                         }
-                        String name = nameBuilder.toString();
-                        String category = parts[parts.length - 2];
-                        double price = Double.parseDouble(parts[parts.length - 1]);
+                        String name = input.substring(firstQuote + 1, lastQuote);
 
-                        try {
-                            Productos product = new Productos(id, name, price, Category.valueOf(category.toUpperCase()));
-                            if (catalog.addProduct(product)) {
-                                System.out.println(product);
-                                System.out.println("prod add: ok");
-                            } else {
-                                System.out.println("Fail: product not added");
-                            }
-                        } catch (IllegalArgumentException e) {
-                            System.out.println("Fail: Product not added");
+                        // Las partes restantes después del nombre
+                        String afterName = input.substring(lastQuote + 1).trim();
+                        String[] tail = afterName.split(" ");
+
+                        // tail debe ser: CATEGORY PRICE [MAXPERSONAL]
+                        if (tail.length < 2) {
+                            System.out.println("Fail: invalid parameters");
+                            break;
                         }
-                    } catch (NumberFormatException e) {
-                        System.out.println("Fail: Product not added ");
+
+                        String categoryTxt = tail[0];
+                        double price = Double.parseDouble(tail[1]);
+
+                        Productos product;
+
+                        // Si hay 3 elementos en tail → hay maxPersonal
+                        if (tail.length == 3) {
+                            int maxPersonal = Integer.parseInt(tail[2]);
+                            product = new ProductosPersonalizables(id, name, price, Category.valueOf(categoryTxt), maxPersonal);
+                        } else {
+                            product = new Productos(id, name, price, Category.valueOf(categoryTxt));
+                        }
+
+                        if (catalog.addProduct(product)) {
+                            System.out.println(product.toString());
+                            System.out.println("prod add: ok\n");
+                        } else {
+                            System.out.println("Fail: product not added\n");
+                        }
+
+                    } catch (Exception e) {
+                        System.out.println("Fail: Product not added\n");
                     }
-                    System.out.println();
-
-                }case "addfood" -> {
+                }
+                case "addfood" -> {
                     String id;
                     try {
                         id = (parts[2]);
@@ -285,6 +303,7 @@ public class App {
             switch (subcommand.toLowerCase()) {
                 case "add" -> {
                     try {
+
                         if (ticket.getState() == TicketState.CLOSED) {
                             System.out.println("Ticket already closed");
                             break;
@@ -292,7 +311,7 @@ public class App {
 
                         String ticketId = parts[2];
                         String cashId = parts[3];
-                        String itemId = parts[4];   // Puede ser Producto, Food o Meeting
+                        String itemId = parts[4];
                         int cantidad = Integer.parseInt(parts[5]);
 
                         if (!ticket.getTicketId().equals(ticketId)) {
@@ -300,23 +319,64 @@ public class App {
                             break;
                         }
 
-                        // Buscar item en el catálogo (Productos, Food o Meetings)
+                        // Buscar item en catálogo
                         Object item = catalog.getProductById(Integer.parseInt(itemId));
                         if (item == null) {
                             System.out.println("Ticket add: Error - item not found");
                             break;
                         }
 
-                        // Comprobar límite de 100 items
+                        // Límite de 100 items
                         if (ticket.getItemsCount() + cantidad > 100) {
                             System.out.println("Ticket add: Error - cannot add, exceeds maximum 100 items per ticket");
                             break;
                         }
 
-                        TicketItem newItem = new TicketItem(item, cantidad);
-                        if (!ticket.addItem(newItem)) {
-                            System.out.println("Ticket add: Error - cannot add item");
-                            break;
+                        // 1) Analizar textos personalizados si el producto lo permite
+                        ArrayList<String> nuevosTextos = new ArrayList<>();
+
+                        for (int i = 6; i < parts.length; i++) {
+                            String param = parts[i];
+                            if (param.startsWith("--p")) {
+                                String txt = param.substring(3);  // elimina "--p"
+                                nuevosTextos.add(txt);
+                            }
+                        }
+
+                        // 2) Si es personalizable → clonar correctamente cada unidad
+                        if (item instanceof ProductosPersonalizables orig) {
+
+                            // Añadir los textos al objeto “temporal”
+                            for (String t : nuevosTextos) {
+                                orig.addTexto(t);  // respeta maxPersonal
+                            }
+
+                            // Añadir tantas unidades como cantidad
+                            for (int u = 0; u < cantidad; u++) {
+
+                                ProductosPersonalizables copia = new ProductosPersonalizables(
+                                        orig.getId(),
+                                        orig.getNombre(),
+                                        orig.getPrecioBase(),
+                                        orig.getCategoria(),
+                                        orig.getMaxTextos()
+                                );
+
+                                for (String t : orig.getTextos()) copia.addTexto(t);
+
+                                TicketItem newItem = new TicketItem(copia, 1);
+                                if (!ticket.addItem(newItem)) {
+                                    System.out.println("Ticket add: Error - cannot add item");
+                                    break;
+                                }
+                            }
+
+                        } else {
+                            // Producto normal
+                            TicketItem newItem = new TicketItem(item, cantidad);
+                            if (!ticket.addItem(newItem)) {
+                                System.out.println("Ticket add: Error - cannot add item");
+                            }
                         }
 
                         ticket.setState(TicketState.OPEN);
@@ -383,6 +443,7 @@ public class App {
                     System.out.println("  Total discount: 0.0");
                     System.out.println("  Final Price: 0.0");
                     System.out.println("ticket new: ok");
+                    System.out.println();
 
                 }
                 case "print" -> {
