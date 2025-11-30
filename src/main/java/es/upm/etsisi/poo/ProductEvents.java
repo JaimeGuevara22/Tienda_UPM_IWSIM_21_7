@@ -14,7 +14,7 @@ public abstract class ProductEvents {
     public ProductEvents(LocalDate expirationDate, int numParticipants, double price, String id, String name) {
         if (numParticipants<1 || numParticipants>100){
             throw new IllegalArgumentException("Máximo de participantes inválido (1-100)");
-        }else{
+        }
             this.name = name;
         this.expirationDate = expirationDate;
         this.numParticipants = numParticipants;
@@ -24,7 +24,6 @@ public abstract class ProductEvents {
 
         }else{
             throw new NumberFormatException("El id no es un número");
-        }
         }
     }
     public String getId(){
@@ -36,8 +35,11 @@ public abstract class ProductEvents {
     public String getNombre(){
         return name;
     }
+    public int getNumParticipants(){
+        return numParticipants;
+    }
     @Override
     public String toString(){
-        return ", id: "+id+", name: "+name+", price: "+price+" date of event: "+expirationDate+", max people allowed: "+numParticipants+"}";
+        return ", id: "+id+", name: "+name+", price: "+price+", date of event: "+expirationDate+", max people allowed: "+numParticipants+", actual people in event: "+ "}";
     }
 }

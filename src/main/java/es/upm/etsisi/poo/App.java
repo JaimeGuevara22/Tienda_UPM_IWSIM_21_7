@@ -274,8 +274,6 @@ public class App {
                         }
                     } catch (IllegalArgumentException e) {
                         System.out.println("Error processing ->prod addMeeting ->Error adding product");
-
-
                     }catch(DateTimeParseException e){
                         System.out.println("Error processing ->prod addMeeting ->Error adding product");
                     }

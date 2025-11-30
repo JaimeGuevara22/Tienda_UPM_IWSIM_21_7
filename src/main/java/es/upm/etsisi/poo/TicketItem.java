@@ -46,8 +46,12 @@ public class TicketItem {
 
     public double getPrecio(Object o) {
         if (o instanceof Productos p) return p.getPrecio();
-        if (o instanceof Food f) return f.getPrice();         // asegúrate que existe getPrice()
-        if (o instanceof Meetings m) return m.getPrice();     // idem
+        if (o instanceof Food f) {
+            return f.getPrice() * f.getNumParticipants();         // asegúrate que existe getPrice()
+        }
+        if (o instanceof Meetings m){
+            return m.getPrice() * m.getNumParticipants();     // idem
+        }
         return 0;
     }
 
@@ -57,6 +61,9 @@ public class TicketItem {
         double descuento = 0;
         if (item instanceof Productos p && cantidad > 1) {
             descuento = precioUnitario * p.getCategoria().getDiscount();
+        }
+        if(item instanceof Food || item instanceof Meetings){
+            return item.toString();
         }
         return item.toString() + " **discount -" + String.format("%.2f", descuento);
     }

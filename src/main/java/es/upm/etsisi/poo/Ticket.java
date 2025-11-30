@@ -156,9 +156,16 @@ public class Ticket {
             }
         }
 
-        // Imprimir cada item según su cantidad
         for (TicketItem ti : copia) {
-            for (int k = 0; k < ti.getCantidad(); k++) {
+            Object prod = ti.getItem();
+
+            if (prod instanceof Productos || prod instanceof ProductosPersonalizables) {
+                for (int k = 0; k < ti.getCantidad(); k++) {
+                    System.out.println(ti);
+                }
+            }
+            //Si son meetings o food lo muestro en una línea
+            else if (prod instanceof Food || prod instanceof Meetings) {
                 System.out.println(ti);
             }
         }
