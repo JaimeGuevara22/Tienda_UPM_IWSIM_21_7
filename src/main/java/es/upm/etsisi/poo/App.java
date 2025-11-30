@@ -284,6 +284,9 @@ public class App {
             }
         }catch (ArrayIndexOutOfBoundsException e){
             System.out.println();
+        }catch (NumberFormatException e){
+            System.out.println(
+            );
         }
     }
     private static void ticketCommand(String input) {
