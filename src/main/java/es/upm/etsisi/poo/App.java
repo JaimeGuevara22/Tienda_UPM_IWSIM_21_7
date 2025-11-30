@@ -364,6 +364,7 @@ public class App {
                             }
                         }
 
+
                         ticket.setState(TicketState.OPEN);
                         System.out.println("Ticket: " + ticket.getTicketId());
                         ticket.printTicket();
