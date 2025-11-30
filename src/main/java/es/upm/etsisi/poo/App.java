@@ -345,13 +345,8 @@ public class App {
 
                             for (int u = 0; u < cantidad; u++) {
 
-                                ProductosPersonalizables copia = new ProductosPersonalizables(
-                                        orig.getId(),
-                                        orig.getNombre(),
-                                        orig.getPrecioBase(),
-                                        orig.getCategoria(),
-                                        orig.getMaxTextos()
-                                );
+                                ProductosPersonalizables copia = new ProductosPersonalizables(orig.getId(), orig.getNombre(),
+                                        orig.getPrecioBase(), orig.getCategoria(), orig.getMaxTextos());
 
                                 for (String t : orig.getTextos()) copia.addTexto(t);
 
