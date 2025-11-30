@@ -365,10 +365,25 @@ public class App {
                             }
                         }
 
-
                         ticket.setState(TicketState.OPEN);
                         System.out.println("Ticket: " + ticket.getTicketId());
-                        ticket.printTicket();
+                        if (item instanceof Meetings m) {
+                            double precioUnitario = m.getPrice();
+                                double totalPrice = precioUnitario * cantidad;
+                                System.out.println("{Class:Meeting, id: " + m.getId() + ", name: " + m.getNombre() + ", price: " + totalPrice +
+                                        ", date of event: " + m.getMeetingsExpirationDate() +
+                                        ", max people allowed: " + m.getNumParticipants() +
+                                        ", actual people in event: " + cantidad + "}");
+                        }else if(item instanceof Food f) {
+                            double precioUnitario = f.getPrice();
+                            double totalPrice = precioUnitario * cantidad;
+                            System.out.println("{Class:Meeting, id: " + f.getId() + ", name: " + f.getNombre() + ", price: " + totalPrice +
+                                    ", date of event: " + f.getFoodExpirationDate() +
+                                    ", max people allowed: " + f.getNumParticipants() +
+                                    ", actual people in event: " + cantidad + "}");
+                        }else{
+                                ticket.printTicket();
+                        }
                         System.out.println("ticket add: ok\n");
 
                     } catch (Exception e) {

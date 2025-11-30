@@ -40,6 +40,6 @@ public abstract class ProductEvents {
     }
     @Override
     public String toString(){
-        return ", id: "+id+", name: "+name+", price: "+price+", date of event: "+expirationDate+", max people allowed: "+numParticipants+", actual people in event: "+ "}";
+        return ", id: "+id+", name: "+name+", price: "+price+", date of event: "+expirationDate+", max people allowed: "+numParticipants+"}";
     }
 }

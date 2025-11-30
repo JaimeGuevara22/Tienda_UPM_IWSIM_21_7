@@ -29,9 +29,9 @@ public class TicketItem {
         double precioUnitario = getPrecio(item) ;
 
         if(item instanceof Productos p && cantidad > 1) {
-            this.subtotal=precioUnitario* cantidad*(1-p.getCategoria().getDiscount());
+            subtotal = precioUnitario* cantidad*(1-p.getCategoria().getDiscount());
         }else{
-            this.subtotal=precioUnitario*cantidad;
+            subtotal = precioUnitario*cantidad;
         }
     }
     public String getId() {
@@ -50,21 +50,20 @@ public class TicketItem {
             return f.getPrice() * f.getNumParticipants();         // asegúrate que existe getPrice()
         }
         if (o instanceof Meetings m){
-            return m.getPrice() * m.getNumParticipants();     // idem
+            return m.getPrice();
         }
         return 0;
     }
 
     @Override
     public String toString() {
-        double precioUnitario = getPrecio(item);
-        double descuento = 0;
-        if (item instanceof Productos p && cantidad > 1) {
-            descuento = precioUnitario * p.getCategoria().getDiscount();
+        if(item instanceof Productos p) {
+            double descuento = (cantidad > 1) ? getPrecio(item) * p.getCategoria().getDiscount() : 0;
+            return item.toString() + " **discount -" + String.format("%.2f", descuento);
+        }  else if(item instanceof ProductosPersonalizables pp) {
+            double descuento = (cantidad > 1) ? getPrecio(item) * pp.getCategoria().getDiscount() : 0;
+            return item.toString() + " **discount -" + String.format("%.2f", descuento);
         }
-        if(item instanceof Food || item instanceof Meetings){
-            return item.toString();
-        }
-        return item.toString() + " **discount -" + String.format("%.2f", descuento);
+        return item.toString();
     }
 }
