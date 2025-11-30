@@ -56,11 +56,10 @@ public class ProductosPersonalizables extends Productos {
                 .append("', category:")
                 .append(getCategoria())
                 .append(", price:")
-                .append(this.getPrecio())
+                .append(getPrecio())
                 .append(", maxPersonal:")
                 .append(maxTextos);
 
-        // Mostrar textos si existen
         if (textos != null && !textos.isEmpty()) {
             sb.append(", personalizationList:[");
             for (int i = 0; i < textos.size(); i++) {

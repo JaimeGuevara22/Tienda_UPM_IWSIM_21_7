@@ -67,13 +67,35 @@ public class Ticket {
         this.ticketId = nuevoId;
     }
 
-    public boolean addItem(TicketItem item) {
+    public boolean addItem(TicketItem nuevo) {
 
-        if(contador+item.getCantidad()> items.length){
-            return false;
+        Object newObj = nuevo.getItem();
+
+        for (int i = 0; i < contador; i++) {
+
+            TicketItem existente = items[i];
+            Object oldObj = existente.getItem();
+
+            if (oldObj instanceof Productos p1 && newObj instanceof Productos p2) {
+                if (p1.getId() == p2.getId()) {
+
+                    if (p1 instanceof ProductosPersonalizables a && p2 instanceof ProductosPersonalizables b) {
+                        if (!a.getTextos().equals(b.getTextos())) {
+                            continue;
+                        }
+                    }
+                    existente.setCantidad(existente.getCantidad() + nuevo.getCantidad());
+                    return true;
+                }
+            }
         }
-        items[contador++] = item;
-        return true;
+
+        if (contador < items.length) {
+            items[contador++] = nuevo;
+            return true;
+        }
+
+        return false;
     }
 
 

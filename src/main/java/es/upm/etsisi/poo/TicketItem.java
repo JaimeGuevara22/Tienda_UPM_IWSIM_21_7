@@ -55,10 +55,9 @@ public class TicketItem {
     public String toString() {
         double precioUnitario = getPrecio(item);
         double descuento = 0;
-
-        if (item instanceof Productos p && cantidad > 1)
+        if (item instanceof Productos p && cantidad > 1) {
             descuento = precioUnitario * p.getCategoria().getDiscount();
-
+        }
         return item.toString() + " **discount -" + String.format("%.2f", descuento);
     }
 }

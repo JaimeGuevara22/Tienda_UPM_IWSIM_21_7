@@ -125,10 +125,9 @@ public class App {
             switch (subcommand.toLowerCase()) {
                 case "add" -> {
                     try {
-                        // ID siempre es la segunda palabra
+                        // Id siempre es la segunda palabra
                         int id = Integer.parseInt(parts[2]);
 
-                        // Extraer el nombre entre comillas
                         int firstQuote = input.indexOf('"');
                         int lastQuote = input.lastIndexOf('"');
                         if (firstQuote == -1 || lastQuote == -1 || lastQuote == firstQuote) {
@@ -137,11 +136,9 @@ public class App {
                         }
                         String name = input.substring(firstQuote + 1, lastQuote);
 
-                        // Las partes restantes después del nombre
                         String afterName = input.substring(lastQuote + 1).trim();
                         String[] tail = afterName.split(" ");
 
-                        // tail debe ser: CATEGORY PRICE [MAXPERSONAL]
                         if (tail.length < 2) {
                             System.out.println("Fail: invalid parameters");
                             break;
@@ -152,7 +149,6 @@ public class App {
 
                         Productos product;
 
-                        // Si hay 3 elementos en tail → hay maxPersonal
                         if (tail.length == 3) {
                             int maxPersonal = Integer.parseInt(tail[2]);
                             product = new ProductosPersonalizables(id, name, price, Category.valueOf(categoryTxt), maxPersonal);
@@ -326,13 +322,11 @@ public class App {
                             break;
                         }
 
-                        // Límite de 100 items
                         if (ticket.getItemsCount() + cantidad > 100) {
                             System.out.println("Ticket add: Error - cannot add, exceeds maximum 100 items per ticket");
                             break;
                         }
 
-                        // 1) Analizar textos personalizados si el producto lo permite
                         ArrayList<String> nuevosTextos = new ArrayList<>();
 
                         for (int i = 6; i < parts.length; i++) {
@@ -343,15 +337,12 @@ public class App {
                             }
                         }
 
-                        // 2) Si es personalizable → clonar correctamente cada unidad
                         if (item instanceof ProductosPersonalizables orig) {
 
-                            // Añadir los textos al objeto “temporal”
                             for (String t : nuevosTextos) {
-                                orig.addTexto(t);  // respeta maxPersonal
+                                orig.addTexto(t);
                             }
 
-                            // Añadir tantas unidades como cantidad
                             for (int u = 0; u < cantidad; u++) {
 
                                 ProductosPersonalizables copia = new ProductosPersonalizables(
@@ -372,7 +363,6 @@ public class App {
                             }
 
                         } else {
-                            // Producto normal
                             TicketItem newItem = new TicketItem(item, cantidad);
                             if (!ticket.addItem(newItem)) {
                                 System.out.println("Ticket add: Error - cannot add item");
