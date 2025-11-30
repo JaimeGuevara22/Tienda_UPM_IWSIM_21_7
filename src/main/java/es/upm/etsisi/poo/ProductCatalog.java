@@ -2,6 +2,7 @@ package es.upm.etsisi.poo;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
@@ -31,10 +32,19 @@ public class ProductCatalog {
         }
     }
 
-    public Productos getProductById(int id) {
+    public Object getProductById(int id) {
         for (Object o : items) {
             if (o instanceof Productos p && p.getId() == id) {
                 return p;
+            }
+            if (o instanceof Food f && Integer.parseInt(f.getId()) == id){
+                return f;
+            }
+            if (o instanceof Meetings m && Integer.parseInt(m.getId()) == id){
+                return m;
+            }
+            if (o instanceof ProductosPersonalizables pp && pp.getId() == id) {
+                return pp;
             }
         }
         return null;
@@ -58,8 +68,9 @@ public class ProductCatalog {
         }
         if (item instanceof Meetings) {
             Meetings m = (Meetings) item;
-            long dia = ChronoUnit.DAYS.between(LocalDate.now(), m.getMeetingsExpirationDate());
-            if (dia<0) return false;
+            long horas = ChronoUnit.HOURS.between(LocalDateTime.now(), m.getMeetingsExpirationDate().atStartOfDay());
+
+            if (horas<12) return false;
         }
         for (int i = 0; i < items.length; i++) {
             if (items[i] == null) {

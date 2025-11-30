@@ -219,7 +219,7 @@ public class App {
                             newValue = parts[4];
                         }
 
-                        Productos product = catalog.getProductById(id);
+                        Object product = catalog.getProductById(id);
 
                         if (product == null) {
                             System.out.println("Fail: product not found\n");
