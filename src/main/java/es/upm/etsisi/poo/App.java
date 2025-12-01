@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
-import static java.util.Collections.sort;
 
 public class App {
 
@@ -26,11 +25,12 @@ public class App {
     public static void main(String[] args) {
         String ticketId = null;
         String cashId = null;
-        Scanner sc = null;
+        Scanner sc = new Scanner(System.in);
         boolean continuar = true;
         ticket = new Ticket(ticketId, cashId);
         listCash = new cashController();
 
+        // Inicialización (lectura de ficheros, etc.)
         try {
             if (args.length > 0) {
                 String nombreFichero = args[0];
@@ -51,34 +51,42 @@ public class App {
             while (continuar) {
                 System.out.print(prompt);
                 String input = sc.nextLine().trim();
-                String[] parts = input.trim().split(" ");
-                String caso = parts[0];
                 if (input.isEmpty()) {
                     continue;
                 }
 
-                if (caso.toLowerCase().equals("help")) {
-                    help();
-                } else if (caso.toLowerCase().equals("echo")) {
-                    String texto = input.substring(input.indexOf(" ") + 1); // quita la palabra "echo"
-                    System.out.println(texto);
-                    System.out.println();
-                } else if (caso.toLowerCase().equals("exit")) {
-                    System.out.println("Closing application.");
-                    System.out.println("Goodbye!");
-                    continuar = false;
-                } else if (caso.toLowerCase().equals("prod")) {
-                    prodCommand(input);
-                } else if (caso.toLowerCase().equals("ticket")) {
-                    ticketCommand(input);
-                } else if (caso.toLowerCase().equals("cash")) {
-                    cashCommand(input);
-                } else if (caso.toLowerCase().equals("client")) {
-                    clientCommand(input);
+                try {
+                    // Dispatch de comandos
+                    if (input.equalsIgnoreCase("help")) {
+                        help();
+                    } else if (input.equalsIgnoreCase("exit")) {
+                        System.out.println("Closing application.");
+                        continuar = false;
+                    } else if (input.startsWith("prod")) {
+                        prodCommand(input);
+                    } else if (input.startsWith("ticket")) {
+                        ticketCommand(input);
+                    } else if (input.startsWith("cash")) {
+                        cashCommand(input);
+                    } else if (input.startsWith("client")) {
+                        clientCommand(input);
+                    } else {
+                        System.out.println("Unknown command. Type 'help' for a list of commands.");
+                    }
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Input error: " + e.getMessage());
+                } catch (NumberFormatException e) {
+                    System.out.println("Number format error: " + e.getMessage());
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.out.println("Argument error: missing or insufficient arguments.");
+                } catch (java.time.format.DateTimeParseException e) {
+                    System.out.println("Date format error: " + e.getMessage());
+                } catch (Exception e) {
+                    System.out.println("Unexpected error (" + e.getClass().getSimpleName() + "): " + e.getMessage());
+                    e.printStackTrace(System.out); // opcional: útil durante desarrollo
                 }
-
-
             }
+
             sc.close();
         }catch (FileNotFoundException e) {
             System.err.println("Error: File not found - " + e.getMessage());
