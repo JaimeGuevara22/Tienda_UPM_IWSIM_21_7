@@ -25,7 +25,7 @@ public class App {
     public static void main(String[] args) {
         String ticketId = null;
         String cashId = null;
-        Scanner sc = new Scanner(System.in);
+        Scanner sc = null;
         boolean continuar = true;
         ticket = new Ticket(ticketId, cashId);
         listCash = new cashController();
@@ -41,7 +41,6 @@ public class App {
                     sc = new Scanner(new File(nombreFichero));
                 }
             } else {
-
                 System.out.println("Welcome to the ticket module App.");
                 System.out.println("Ticket module. Type 'help' to see commands.");
                 sc = new Scanner(System.in);
@@ -75,8 +74,6 @@ public class App {
                     }
                 } catch (IllegalArgumentException e) {
                     System.out.println("Input error: " + e.getMessage());
-                } catch (NumberFormatException e) {
-                    System.out.println("Number format error: " + e.getMessage());
                 } catch (ArrayIndexOutOfBoundsException e) {
                     System.out.println("Argument error: missing or insufficient arguments.");
                 } catch (java.time.format.DateTimeParseException e) {
@@ -87,7 +84,6 @@ public class App {
                 }
             }
 
-            sc.close();
         }catch (FileNotFoundException e) {
             System.err.println("Error: File not found - " + e.getMessage());
         } catch (Exception e) {
