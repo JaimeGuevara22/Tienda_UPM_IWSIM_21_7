@@ -146,7 +146,7 @@ public class ProductCatalog {
         }
     }
 
-    public boolean addTextToProduct(int id, String texto) {
+    public boolean addTextToProduct(int id, String texto) {// no necesario tenemos otro igual en productosPersonalizables
         for (Object o : items) {
             if (o instanceof ProductosPersonalizables p && p.getId() == id) {
                 return p.addTexto(texto);

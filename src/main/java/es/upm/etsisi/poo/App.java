@@ -55,7 +55,6 @@ public class App {
                 }
 
                 try {
-                    // Dispatch de comandos
                     if (input.equalsIgnoreCase("help")) {
                         help();
                     } else if (input.equalsIgnoreCase("exit")) {
@@ -80,7 +79,7 @@ public class App {
                     System.out.println("Date format error: " + e.getMessage());
                 } catch (Exception e) {
                     System.out.println("Unexpected error (" + e.getClass().getSimpleName() + "): " + e.getMessage());
-                    e.printStackTrace(System.out); // opcional: útil durante desarrollo
+                    e.printStackTrace(System.out);
                 }
             }
 
