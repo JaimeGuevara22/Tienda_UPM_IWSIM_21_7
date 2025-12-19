@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo;
 
+import java.util.ArrayList;
+
 public abstract class User {
     protected String nombre;
     protected String email;
@@ -14,4 +16,6 @@ public abstract class User {
     public String getEmail(){
         return email;
     }
+    protected ArrayList<Ticket> tickets = new ArrayList<>();
+
 }

@@ -21,7 +21,6 @@ public class Client extends User{
     public String toString(){
         return  "Client{identifier= '" + dni + "', name= '" + nombre +"', email= '" + email + "', cash= " + cashUp + "}";
     }
-    private ArrayList<Ticket> tickets = new ArrayList<>();
     public void addTicket(Ticket t){
         tickets.add(t);
     }

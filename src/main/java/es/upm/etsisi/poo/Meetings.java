@@ -13,8 +13,4 @@ public class Meetings extends ProductEvents {
     public String toString() {
         return "{Class:Meeting"+ super.toString();
     }
-
-
-
-
 }

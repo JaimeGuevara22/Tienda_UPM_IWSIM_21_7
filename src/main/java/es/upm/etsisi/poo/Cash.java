@@ -43,12 +43,9 @@ public class Cash extends User{
         return "Cash{identifier= '" + cashId + "', name='" + this.getNombre() + "', email= '" + this.getEmail() + "'}";
 
     }
-    private ArrayList<Ticket> tickets = new ArrayList<>();
     public ArrayList<Ticket> getTickets() {
         return tickets;
     }
-
-
     public void addTicket(Ticket ticket) {
         tickets.add(ticket);
     }

@@ -131,15 +131,15 @@ public class App {
                         // Id siempre es la segunda palabra
                         int id = Integer.parseInt(parts[2]);
 
-                        int firstQuote = input.indexOf('"');
-                        int lastQuote = input.lastIndexOf('"');
-                        if (firstQuote == -1 || lastQuote == -1 || lastQuote == firstQuote) {
+                        int primeraComilla = input.indexOf('"');
+                        int ultimaComilla = input.lastIndexOf('"');
+                        if (primeraComilla == -1 || ultimaComilla == -1 || ultimaComilla == primeraComilla) {
                             System.out.println("Fail: invalid name format");
                             break;
                         }
-                        String name = input.substring(firstQuote + 1, lastQuote);
+                        String name = input.substring(primeraComilla + 1, ultimaComilla);
 
-                        String afterName = input.substring(lastQuote + 1).trim();
+                        String afterName = input.substring(ultimaComilla + 1).trim();
                         String[] tail = afterName.split(" ");
 
                         if (tail.length < 2) {
@@ -147,16 +147,16 @@ public class App {
                             break;
                         }
 
-                        String categoryTxt = tail[0];
+                        String categoria = tail[0];
                         double price = Double.parseDouble(tail[1]);
 
                         Productos product;
 
                         if (tail.length == 3) {
                             int maxPersonal = Integer.parseInt(tail[2]);
-                            product = new ProductosPersonalizables(id, name, price, Category.valueOf(categoryTxt), maxPersonal);
+                            product = new ProductosPersonalizables(id, name, price, Category.valueOf(categoria), maxPersonal);
                         } else {
-                            product = new Productos(id, name, price, Category.valueOf(categoryTxt));
+                            product = new Productos(id, name, price, Category.valueOf(categoria));
                         }
 
                         if (catalog.addProduct(product)) {
