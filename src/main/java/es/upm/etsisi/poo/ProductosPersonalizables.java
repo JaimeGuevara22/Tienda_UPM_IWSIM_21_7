@@ -2,7 +2,7 @@ package es.upm.etsisi.poo;
 
 import java.util.ArrayList;
 
-public class ProductosPersonalizables extends Productos {
+public class ProductosPersonalizables extends Product {
 
     private final int maxTextos;
     private ArrayList<String> textos;

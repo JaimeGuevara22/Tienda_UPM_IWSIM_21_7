@@ -19,10 +19,10 @@ public class ProductCatalog {
                 return ((Productos) item).getId();
             }
             if (item instanceof Food) {
-                return Integer.parseInt(((Food) item).getId());
+                return ((Food) item).getId();
             }
             if (item instanceof Meetings) {
-                return Integer.parseInt(((Meetings) item).getId());
+                return ((Meetings) item).getId();
             }
             return -1;
         }catch (NumberFormatException e) {
@@ -35,10 +35,10 @@ public class ProductCatalog {
             if (o instanceof Productos p && p.getId() == id) {
                 return p;
             }
-            if (o instanceof Food f && Integer.parseInt(f.getId()) == id){
+            if (o instanceof Food f && f.getId() == id){
                 return f;
             }
-            if (o instanceof Meetings m && Integer.parseInt(m.getId()) == id){
+            if (o instanceof Meetings m && m.getId() == id){
                 return m;
             }
             if (o instanceof ProductosPersonalizables pp && pp.getId() == id) {
@@ -105,7 +105,7 @@ public class ProductCatalog {
     public boolean updateField(int id, String field, String value) {
         for (Object o : items) {
             if (o == null) continue;
-            if (o instanceof Productos p && p.getId() == id) {
+            if (o instanceof Product p && p.getId() == id) {
                 switch (field.toUpperCase()) {
                     case "NAME" -> {
                         p.setNombre(value);

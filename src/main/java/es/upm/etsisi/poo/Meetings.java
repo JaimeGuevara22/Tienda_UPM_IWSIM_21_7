@@ -2,8 +2,8 @@ package es.upm.etsisi.poo;
 import java.time.LocalDate;
 
 public class Meetings extends ProductEvents {
-    public Meetings(LocalDate expirationDate, int numParticipants, double price, String id, String name) {
-        super(expirationDate, numParticipants, price, id, name);
+    public Meetings(LocalDate expirationDate, int numParticipants, double price, int id, String name) {
+        super(id, price, name, expirationDate, numParticipants);
 
     }
     public LocalDate getMeetingsExpirationDate(){

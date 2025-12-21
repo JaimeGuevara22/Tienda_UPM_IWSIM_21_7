@@ -3,30 +3,21 @@ package es.upm.etsisi.poo;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public abstract class ProductEvents {
+public abstract class ProductEvents extends Productos{
     protected LocalDate expirationDate;
 
     protected int numParticipants;
     protected double price;
-    protected String id;
+    protected int id;
     protected String name;
 
-    public ProductEvents(LocalDate expirationDate, int numParticipants, double price, String id, String name) {
-        if (numParticipants<1 || numParticipants>100){
-            throw new IllegalArgumentException("Máximo de participantes inválido (1-100)");
-        }
-            this.name = name;
-        this.expirationDate = expirationDate;
-        this.numParticipants = numParticipants;
-        this.price = price;
-        if(id.length() == 5){
-            this.id = id;
-
-        }else{
-            throw new NumberFormatException("El id no es un número");
-        }
+    public ProductEvents(int id , double price, String name, LocalDate expirationDate, int numParticipants) {
+     super(id, name, price);
+     this.expirationDate = expirationDate;
+     if(numParticipants < 0 || numParticipants > 100) throw new IllegalArgumentException("Error: número de participantes inválido.");
+     this.numParticipants = numParticipants;
     }
-    public String getId(){
+    public int getId(){
         return id;
     }
     public double getPrice() {

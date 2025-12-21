@@ -98,9 +98,9 @@ public class Ticket {
 
 
 
-    public boolean removeItem(String id) {
+    public boolean removeItem(int id) {
         for (int i = 0; i < contador; i++) {
-            if (items[i].getId().equals(id)) {
+            if (items[i].getId() == id) {
                 items[i] = items[contador - 1]; // Reemplazamos por el último
                 items[contador - 1] = null;
                 contador--;

@@ -156,7 +156,7 @@ public class App {
                             int maxPersonal = Integer.parseInt(tail[2]);
                             product = new ProductosPersonalizables(id, name, price, Category.valueOf(categoria), maxPersonal);
                         } else {
-                            product = new Productos(id, name, price, Category.valueOf(categoria));
+                            product = new Product(id, name, price, Category.valueOf(categoria));
                         }
 
                         if (catalog.addProduct(product)) {
@@ -171,9 +171,9 @@ public class App {
                     }
                 }
                 case "addfood" -> {
-                    String id;
+                    int id;
                     try {
-                        id = (parts[2]);
+                        id = Integer.parseInt(parts[2]);
 
                         StringBuilder nameBuilder = new StringBuilder();
                         for (int i = 3; i < parts.length - 3; i++) {
@@ -255,9 +255,9 @@ public class App {
                     System.out.println();
                 }
                 case "addmeeting" -> {
-                    String id;
+                    int id;
                     try {
-                        id = (parts[2]);
+                        id = Integer.parseInt(parts[2]);
 
                         StringBuilder nameBuilder = new StringBuilder();
                         for (int i = 3; i < parts.length - 3; i++) {
@@ -397,7 +397,7 @@ public class App {
                 case "remove" -> {
                     int prodId = Integer.parseInt(parts[parts.length - 1]);
                     Object removed = catalog.getProductById(prodId);
-                    if (ticket.removeItem(String.valueOf(prodId))) {
+                    if (ticket.removeItem(prodId)) {
                         System.out.println("Ticket: "+ticket.getTicketId());
                         ticket.printTicket();
                         System.out.println("ticket remove: ok");
