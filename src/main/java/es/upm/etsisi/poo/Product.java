@@ -13,7 +13,15 @@ public class Product extends Productos{
         this.category = category;
     }
     @Override
+    public boolean tieneDescuento(){
+        return true;
+    }
+    @Override
+    public double getDescuento(){
+        return getCategoria().getDiscount();
+    }
+    @Override
     public String toString() {
-        return "{class:Product, id:" + id + ", name:'" + nombre + "', category:" + category + ", price:" + precio + "}";
+        return "{Class:Product, id:" + id + ", name:'" + nombre + "', category:" + category + ", price:" + precio + "}";
     }
 }

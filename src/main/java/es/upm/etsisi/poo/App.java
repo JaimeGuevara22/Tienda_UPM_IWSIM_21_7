@@ -320,7 +320,7 @@ public class App {
                         }
 
                         // Buscar item en catálogo
-                        Object item = catalog.getProductById(Integer.parseInt(itemId));
+                        Productos item = catalog.getProductById(Integer.parseInt(itemId));
                         if (item == null) {
                             System.out.println("Ticket add: Error - item not found");
                             break;

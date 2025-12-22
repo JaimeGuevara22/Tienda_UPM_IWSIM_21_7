@@ -6,9 +6,11 @@ public class ProductosPersonalizables extends Product {
 
     private final int maxTextos;
     private ArrayList<String> textos;
+    private Category categoria;
 
     public ProductosPersonalizables(int id, String nombre, double precio, Category categoria, int maxTextos){
         super(id, nombre, precio, categoria);
+        this.categoria = categoria;
         if(maxTextos < 0){
             throw new IllegalArgumentException("Número de textos negativo");
         }
@@ -54,10 +56,10 @@ public class ProductosPersonalizables extends Product {
                 .append(", name:'")
                 .append(getNombre())
                 .append("', category:")
-                .append(getCategoria())
+                .append(categoria)
                 .append(", price:")
                 .append(getPrecio())
-                .append(", maxPersonal:")
+                .append(", máximo de textos:")
                 .append(maxTextos);
 
         if (textos != null && !textos.isEmpty()) {
@@ -72,5 +74,8 @@ public class ProductosPersonalizables extends Product {
         sb.append("}");
 
         return sb.toString();
+    }
+    public Category getCategoria(){
+        return categoria;
     }
 }

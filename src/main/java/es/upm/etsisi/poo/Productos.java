@@ -35,5 +35,11 @@ public abstract class Productos {
     public void setPrecio(double precio) {
         this.precio = precio;
     }
+    public boolean tieneDescuento(){
+        return false;
+    }
+    public double getDescuento(){
+        return 0.0;
+    }
 }
 

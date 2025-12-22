@@ -114,7 +114,7 @@ public class Ticket {
         double total = 0.0;
         for (int i = 0; i < contador; i++) {
             TicketItem ti = items[i];
-            total += ti.getPrecio(ti.getItem()) * ti.getCantidad();
+            total += ti.getItem().getPrecio() * ti.getCantidad();
         }
         return total;
     }public double getTotalConDescuento() {
