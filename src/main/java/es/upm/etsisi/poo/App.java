@@ -57,6 +57,8 @@ public class App {
                 try {
                     if (input.equalsIgnoreCase("help")) {
                         help();
+                    } else if (input.startsWith("echo")) {
+                        echo(input);
                     } else if (input.equalsIgnoreCase("exit")) {
                         System.out.println("Closing application.");
                         continuar = false;
@@ -120,6 +122,13 @@ public class App {
         );
         System.out.println();
     }
+    private static void echo(String input){
+        String text = input.substring(5).trim();
+        if (text.startsWith("\"") && text.endsWith("\"")) {
+            text = text.substring(1, text.length() - 1);
+        }
+        System.out.println(text);
+    }
     private static void prodCommand(String input) {
         String[] parts = input.trim().split(" ");
         try {
@@ -174,25 +183,30 @@ public class App {
                     int id;
                     try {
                         id = Integer.parseInt(parts[2]);
-
-                        StringBuilder nameBuilder = new StringBuilder();
-                        for (int i = 3; i < parts.length - 3; i++) {
-                            nameBuilder.append(parts[i].replace("\"", ""));
-                            nameBuilder.append(" ");
+                        int primerasComillas = input.indexOf('"');
+                        int ultimasComillas = input.lastIndexOf('"');
+                        if(primerasComillas == -1 || ultimasComillas == primerasComillas){
+                            System.out.println("Nombre no válido");
+                            return;
                         }
-                        String name = nameBuilder.toString();
-                        double price = Double.parseDouble(parts[parts.length - 3]);
-                        LocalDate date = LocalDate.parse(parts[parts.length - 2]);
-                        int max_people = Integer.parseInt(parts[parts.length - 1]);
-                        Food food = new Food(date, max_people, price, id, name);
+                        String name = input.substring(primerasComillas + 1, ultimasComillas);//intervalo del nombre
+                        String [] resto = input.substring(ultimasComillas + 1).trim().split(" ");
+                        if(resto.length != 3){
+                            System.out.println("Parámetros no válidos");
+                            return;
+                        }
+                        double price = Double.parseDouble(resto[0]);
+                        LocalDate date = LocalDate.parse(resto[1]);
+                        int max_people = Integer.parseInt(resto[2]);
+                        Productos food = new Food(date, max_people, price, id, name);
                         if (catalog.addProduct(food)) {
                             System.out.println(food);
                             System.out.println("prod addFood: ok");
                         } else {
-                            System.out.println("Error processing ->prod addFood ->Error adding product");
+                            System.out.println("Error product not added");
                         }
                     } catch (IllegalArgumentException e) {
-                        System.out.println("Error processing ->prod addMeeting ->Error adding product");
+                        System.out.println("Error processing ->prod addFood ->Error adding product");
 
                         System.out.println();
                     }catch (DateTimeParseException e) {
@@ -222,7 +236,7 @@ public class App {
                             newValue = parts[4];
                         }
 
-                        Object product = catalog.getProductById(id);
+                        Productos product = catalog.getProductById(id);
 
                         if (product == null) {
                             System.out.println("Fail: product not found\n");
@@ -245,7 +259,7 @@ public class App {
 
                 case "remove" -> {
                     int id = Integer.parseInt(parts[2]);
-                    Object removed = catalog.getProductById(id);
+                    Productos removed = catalog.getProductById(id);
                     if (catalog.remove(id)) {
                         System.out.println(removed.toString());
                         System.out.println("prod remove: ok");
@@ -258,7 +272,6 @@ public class App {
                     int id;
                     try {
                         id = Integer.parseInt(parts[2]);
-
                         StringBuilder nameBuilder = new StringBuilder();
                         for (int i = 3; i < parts.length - 3; i++) {
                             nameBuilder.append(parts[i].replace("\"", ""));
@@ -268,7 +281,7 @@ public class App {
                         double price = Double.parseDouble(parts[parts.length - 3]);
                         LocalDate date = LocalDate.parse(parts[parts.length - 2]);
                         int max_people = Integer.parseInt(parts[parts.length - 1]);
-                        Meetings meetings = new Meetings(date, max_people, price, id, name);
+                        Productos meetings = new Meetings(date, max_people, price, id, name);
                         if (catalog.addProduct(meetings)) {
                             System.out.println(meetings);
                             System.out.println("prod addMeeting: ok");
@@ -288,8 +301,7 @@ public class App {
         }catch (ArrayIndexOutOfBoundsException e){
             System.out.println();
         }catch (NumberFormatException e){
-            System.out.println(
-            );
+            System.out.println();
         }
     }
     private static void ticketCommand(String input) {
@@ -371,14 +383,14 @@ public class App {
                         ticket.setState(TicketState.OPEN);
                         System.out.println("Ticket: " + ticket.getTicketId());
                         if (item instanceof Meetings m) {
-                            double precioUnitario = m.getPrice();
+                            double precioUnitario = m.getPrecio();
                                 double totalPrice = precioUnitario * cantidad;
                                 System.out.println("{Class:Meeting, id: " + m.getId() + ", name: " + m.getNombre() + ", price: " + totalPrice +
                                         ", date of event: " + m.getMeetingsExpirationDate() +
                                         ", max people allowed: " + m.getNumParticipants() +
                                         ", actual people in event: " + cantidad + "}");
                         }else if(item instanceof Food f) {
-                            double precioUnitario = f.getPrice();
+                            double precioUnitario = f.getPrecio();
                             double totalPrice = precioUnitario * cantidad;
                             System.out.println("{Class:Meeting, id: " + f.getId() + ", name: " + f.getNombre() + ", price: " + totalPrice +
                                     ", date of event: " + f.getFoodExpirationDate() +
@@ -396,7 +408,7 @@ public class App {
 
                 case "remove" -> {
                     int prodId = Integer.parseInt(parts[parts.length - 1]);
-                    Object removed = catalog.getProductById(prodId);
+                    Productos removed = catalog.getProductById(prodId);
                     if (ticket.removeItem(prodId)) {
                         System.out.println("Ticket: "+ticket.getTicketId());
                         ticket.printTicket();
@@ -449,7 +461,7 @@ public class App {
                     System.out.println("  Final Price: 0.0");
                     System.out.println("ticket new: ok");
                     System.out.println();
-
+                    return;
                 }
                 case "print" -> {
                     ticket.close();
@@ -511,6 +523,7 @@ public class App {
                         System.out.println();
 
                         }
+                    return;
                 }
                 case "remove" -> {
                     String cashId = parts[2];
@@ -520,14 +533,14 @@ public class App {
                         System.out.println("Error: the cash wasn't found in the list.");
                     }
                     System.out.println();
-
+                    return;
                 }
                 case "list" -> {
                     System.out.println("Cash: ");
                     listCash.list();
                     System.out.println("cash list: ok");
                     System.out.println();
-
+                    return;
                 }
                 case "tickets" -> {
                     if(parts.length != 3) {
@@ -547,6 +560,7 @@ public class App {
                         System.out.println(t.getTicketId()+"->"+t.getState());
                     }
                     System.out.println("cash tickets: ok");
+                    return;
                 }
 
             }
@@ -578,7 +592,7 @@ public class App {
                             System.out.println("client add: ok");
                             System.out.println();
                         }
-
+                        return;
                 }
                 case "remove" -> {
                     String dni = parts[2];
@@ -588,12 +602,13 @@ public class App {
                         System.out.println("Error: the client wasn't found in the list.");
                     }
                     System.out.println();
+                    return;
                 }
                 case "list" -> {
                     listClient.list();
                     System.out.println("client list: ok");
                     System.out.println();
-
+                    return;
                 }
 
 

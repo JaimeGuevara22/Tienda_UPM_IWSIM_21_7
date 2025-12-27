@@ -67,24 +67,22 @@ public class Ticket {
 
     public boolean addItem(TicketItem nuevo) {
 
-        Object newObj = nuevo.getItem();
+        Productos newProd = nuevo.getItem();
 
         for (int i = 0; i < contador; i++) {
 
             TicketItem existente = items[i];
-            Object oldObj = existente.getItem();
+            Productos oldProd = existente.getItem();
 
-            if (oldObj instanceof Productos p1 && newObj instanceof Productos p2) {
-                if (p1.getId() == p2.getId()) {
+            if (oldProd.getId() == newProd.getId()) {
 
-                    if (p1 instanceof ProductosPersonalizables a && p2 instanceof ProductosPersonalizables b) {
+                    if (oldProd instanceof ProductosPersonalizables a && newProd instanceof ProductosPersonalizables b) {
                         if (!a.getTextos().equals(b.getTextos())) {
                             continue;
                         }
                     }
                     existente.setCantidad(existente.getCantidad() + nuevo.getCantidad());
                     return true;
-                }
             }
         }
 
@@ -141,29 +139,17 @@ public class Ticket {
             copia[i] = items[i];
         }
 
-        // Ordenar por nombre (toLowerCase)
-        for (int i = 0; i < copia.length - 1; i++) {
-            for (int j = i + 1; j < copia.length; j++) {
-                String nombre1 = getNombre(copia[i]).toLowerCase();
-                String nombre2 = getNombre(copia[j]).toLowerCase();
-                if (nombre1.compareTo(nombre2) > 0) {
-                    TicketItem temp = copia[i];
-                    copia[i] = copia[j];
-                    copia[j] = temp;
-                }
-            }
-        }
+        // Ordenar por nombre usando la función sort de Java
+        Arrays.sort(copia, Comparator.comparing(ti -> ti.getItem().getNombre().toLowerCase()));
 
         for (TicketItem ti : copia) {
-            Object prod = ti.getItem();
-
-            if (prod instanceof Productos || prod instanceof ProductosPersonalizables) {
-                for (int k = 0; k < ti.getCantidad(); k++) {
+            Productos prod = ti.getItem();
+            if(prod instanceof Product || prod instanceof ProductosPersonalizables){
+                for(int i = 0; i < ti.getCantidad(); i++){
                     System.out.println(ti);
                 }
             }
-            //Si son meetings o food lo muestro en una línea
-            else if (prod instanceof Food || prod instanceof Meetings) {
+            else{
                 System.out.println(ti);
             }
         }
