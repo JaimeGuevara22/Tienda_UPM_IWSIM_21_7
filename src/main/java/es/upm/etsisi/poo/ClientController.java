@@ -7,7 +7,7 @@ public class ClientController {
 
     public boolean addClient(Client client){
         for(Client c : clients){
-            if(c.getDni().equals(client.getDni())){
+            if(c.getid().equals(client.getid())){
                 return false;
             }
         }
@@ -16,7 +16,7 @@ public class ClientController {
     }
     public boolean removeClient(String dni){
         for(Client c : clients){
-            if(c.getDni().equals(dni)){
+            if(c.getid().equals(dni)){
                 clients.remove(c);
                 return true;
             }
@@ -31,7 +31,7 @@ public class ClientController {
     }
     public Client findClientByDNI(String DNI) {
         for (Client c : clients) {
-            if (c != null && c.getDni().equals(DNI)) {
+            if (c != null && c.getid().equals(DNI)) {
                 return c;
             }
         }
