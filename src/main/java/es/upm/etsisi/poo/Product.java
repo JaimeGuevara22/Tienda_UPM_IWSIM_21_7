@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo;
 
-public class Product extends Productos{
+public class Product extends Productos implements sellable{
     protected Category category;
     public Product(int id, String nombre, double precio, Category categoria) {
         super(id,nombre,precio);

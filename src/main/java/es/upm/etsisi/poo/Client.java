@@ -12,16 +12,16 @@ public class Client extends User{
         }
         this.id = id;
         this.cashUp = cashId;
-        this.clientType = Type(id);
+        this.clientType = type(id);
     }
-    private ClientType Type(String id){
+    private ClientType type(String id){
         char primer = Character.toUpperCase(id.charAt(0));
         if(Character.isLetter(primer)){
             return clientType = ClientType.BUSINESS;
         }
             return clientType = ClientType.PERSONAL;
     }
-    public String getid(){
+    public String getId(){
         return id;
     }
     public String getCashUp(){

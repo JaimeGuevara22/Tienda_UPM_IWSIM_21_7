@@ -2,7 +2,7 @@ package es.upm.etsisi.poo;
 
 import java.time.LocalDate;
 
-public class Service {
+public class Service implements sellable{
     private static int sec = 1;
     private final int id;
     private final LocalDate expirationDate;
@@ -14,9 +14,6 @@ public class Service {
         this.expirationDate = expirationDate;
         this.type = type;
         this.id = sec++;
-    }
-    public int getId() { //borrar en caso de no ser necesario
-        return id;
     }
     public String getServiceId() {
         return id + "S";
@@ -37,6 +34,6 @@ public class Service {
     }
     @Override
     public String toString() {
-        return "{class:ProductService, id:" + id + ", category:" + type + ", expiration:" + expirationDate + "}";
+        return "{class:ProductService, id:" + getServiceId() + ", category:" + type + ", expiration:" + expirationDate + "}";
     }
 }
