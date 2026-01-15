@@ -1,70 +1,12 @@
 package es.upm.etsisi.poo;
 
 import java.util.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-public class Ticket {
-    private static final HashSet<String> idsUsados = new HashSet<>();
-    private TicketItem[] items;
-    private LocalDateTime fechaApertura;
-    private LocalDateTime fechaCierre;
-    private TicketState state = TicketState.EMPTY;
-    private int contador;
-    private static final DateTimeFormatter formato = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
-
-    private String ticketId;
+public class Ticket extends abstractTicket{
 
     public Ticket(String ticketId, String cashId) {
-        this.items = new TicketItem[100];
-        this.fechaApertura = LocalDateTime.now();
-        this.contador=0;
-        if(ticketId == null){
-            this.ticketId = generarIdApertura();
-        }else {
-            if (idsUsados.contains(ticketId)) {
-                throw new IllegalArgumentException("Error: Id ya usado.");
-            }
-            this.ticketId = ticketId;
-            idsUsados.add(ticketId);
-        }
+        super(ticketId, cashId);
     }
-    public void activate(){
-        if(state == TicketState.EMPTY){
-            state = TicketState.OPEN;
-        }
-    }
-    private String generarIdApertura() {
-        String fecha = fechaApertura.format(formato);
-        String random = generarCadenaId();
-
-        String id = fecha + "-" + random;
-
-        while (idsUsados.contains(id)) {
-            random = generarCadenaId();
-            id = fecha + "-" + random;
-        }
-
-        idsUsados.add(id);
-        return id;
-    }
-    public void close() {
-        if (state == TicketState.CLOSED) return;
-
-        state = TicketState.CLOSED;
-        this.fechaCierre = LocalDateTime.now();
-        String fechaClose = fechaCierre.format(formato);
-
-        String nuevoId = this.ticketId + "-" + fechaClose;
-
-        if (!idsUsados.add(nuevoId)) {
-            throw new RuntimeException("ERROR: identificador repetido al cerrar el ticket.");
-        }
-
-        idsUsados.remove(this.ticketId);
-        this.ticketId = nuevoId;
-    }
-
     public boolean addItem(TicketItem nuevo) {
 
         Productos newProd = nuevo.getItem();
@@ -93,9 +35,6 @@ public class Ticket {
 
         return false;
     }
-
-
-
     public boolean removeItem(int id) {
         for (int i = 0; i < contador; i++) {
             if (items[i].getId() == id) {
@@ -125,6 +64,31 @@ public class Ticket {
 
 
     }
+
+    private String getNombre(TicketItem ti) {
+        Object item = ti.getItem();
+        if (item instanceof Productos p) return p.getNombre();
+        if (item instanceof Food f) return f.getNombre();
+        if (item instanceof Meetings m) return m.getNombre();
+        return "";
+    }
+
+
+    public String getTicketId() {
+        return ticketId;
+    }
+    public TicketState getState() {
+        return state;
+    }
+    public void setState(TicketState state) {
+        this.state = state;
+
+    }
+
+    public int getItemsCount() {
+        return contador;
+    }
+    @Override
     public void printTicket() {
         if (contador == 0) {  // No hay items en el ticket
             System.out.println("Empty ticket");
@@ -157,37 +121,5 @@ public class Ticket {
         System.out.println("Total price: " + String.format("%.2f", getTotalSinDescuento()));
         System.out.println("Total discount: " + String.format("%.2f", getTotalSinDescuento() - getTotalConDescuento()));
         System.out.println("Final Price: " + String.format("%.2f", getTotalConDescuento()));
-    }
-    private String generarCadenaId(){
-        Random randomNumber = new Random();
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < 5; i++){
-            sb.append(randomNumber.nextInt(10));
-        }
-        return sb.toString();
-    }
-
-    private String getNombre(TicketItem ti) {
-        Object item = ti.getItem();
-        if (item instanceof Productos p) return p.getNombre();
-        if (item instanceof Food f) return f.getNombre();
-        if (item instanceof Meetings m) return m.getNombre();
-        return "";
-    }
-
-
-    public String getTicketId() {
-        return ticketId;
-    }
-    public TicketState getState() {
-        return state;
-    }
-    public void setState(TicketState state) {
-        this.state = state;
-
-    }
-
-    public int getItemsCount() {
-        return contador;
     }
 }
