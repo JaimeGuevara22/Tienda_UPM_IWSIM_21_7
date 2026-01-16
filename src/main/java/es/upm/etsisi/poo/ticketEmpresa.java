@@ -44,6 +44,6 @@ public class ticketEmpresa extends abstractTicket{
         if(!hayServicios && hayProductos){
             throw new IllegalStateException("Ticket empresa no puede tener solo productos");
         }
-        close();
+        super.close();
     }
 }
