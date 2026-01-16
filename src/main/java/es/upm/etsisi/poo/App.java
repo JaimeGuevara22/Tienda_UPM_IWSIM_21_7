@@ -15,7 +15,7 @@ public class App {
     private static final String prompt="tUPM> ";
 
     private static ProductCatalog catalog = new ProductCatalog();
-    private static Ticket ticket;
+    private static abstractTicket ticket;
 
     private static cashController listCash = new cashController();
 
@@ -421,6 +421,10 @@ public class App {
                     String id = null;
                     String cashId;
                     String clientId;
+                    char opcion = 'p';
+                    if (parts[parts.length - 1].startsWith("-")) {
+                        opcion = parts[parts.length - 1].charAt(1);
+                    }
                     if (parts.length == 3) {
                         System.out.println("ticket new: error de formato");
                         return;
@@ -448,7 +452,20 @@ public class App {
                         System.out.println("Client not found");
                         return;
                     }
-                    Ticket t = new Ticket(id, cashId);
+                    abstractTicket t;
+                    if (client.esEmpresa()) {
+                        ticketPrinter printer;
+
+                        switch (opcion) {
+                            case 's' -> printer = new printerSoloServicios();
+                            case 'c' -> printer = new printerCombinado();
+                            default -> System.out.println("Empresa debe usar -s o -c");
+                        }
+
+                        t = new ticketEmpresa(id, cashId, printer);
+                    } else {
+                        t = new Ticket(id, cashId);
+                    }
                     client.addTicket(t);
                     cash.addTicket(t);
 

@@ -21,6 +21,7 @@ public class ticketEmpresa extends abstractTicket{
     }
     @Override
     public void printTicket() {
+        printer.print(this);
     }
     @Override
     public boolean addItem(TicketItem nuevo) {
@@ -55,6 +56,7 @@ public class ticketEmpresa extends abstractTicket{
     public int getContadorServicios(){
         return contadorServicios;
     }
+    @Override
     public int getItemsCount(){
         return contador;
     }

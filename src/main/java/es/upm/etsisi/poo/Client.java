@@ -31,7 +31,13 @@ public class Client extends User{
     public String toString(){
         return  "Client{identifier= '" + id + "', name= '" + nombre +"', email= '" + email + "', cash= " + cashUp + "}";
     }
-    public void addTicket(Ticket t){
+    public void addTicket(abstractTicket t){
         tickets.add(t);
+    }
+    public boolean esEmpresa(){
+        return clientType == ClientType.BUSINESS;
+    }
+    public ClientType getClientType() {
+        return clientType;
     }
 }

@@ -88,6 +88,7 @@ public class Ticket extends abstractTicket{
         this.state = state;
 
     }
+    @Override
     public int getItemsCount() {
         return contador;
     }
