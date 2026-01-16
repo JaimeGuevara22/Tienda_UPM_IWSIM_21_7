@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class Ticket extends abstractTicket{
@@ -7,10 +8,13 @@ public class Ticket extends abstractTicket{
     public Ticket(String ticketId, String cashId) {
         super(ticketId, cashId);
     }
-    public boolean addItem(TicketItem nuevo) {
+    @Override
+    public boolean addItem(TicketItem nuevo){
 
         Productos newProd = nuevo.getItem();
-
+        if(!(newProd instanceof Productos)){
+            return false;
+        }
         for (int i = 0; i < contador; i++) {
 
             TicketItem existente = items[i];
@@ -84,7 +88,6 @@ public class Ticket extends abstractTicket{
         this.state = state;
 
     }
-
     public int getItemsCount() {
         return contador;
     }

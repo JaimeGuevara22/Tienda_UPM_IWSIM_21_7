@@ -54,7 +54,6 @@ public abstract class abstractTicket {
         idsUsados.remove(this.ticketId);
         this.ticketId = nuevoId;
     }
-
     protected String generarIdApertura() {
         String fecha = fechaApertura.format(formato);
         String random = generarCadenaId();
@@ -92,4 +91,5 @@ public abstract class abstractTicket {
     }
 
     public abstract void printTicket();
+    public abstract boolean addItem(TicketItem nuevo);
 }
