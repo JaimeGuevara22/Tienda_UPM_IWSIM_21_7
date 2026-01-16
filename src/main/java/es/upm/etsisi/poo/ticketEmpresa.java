@@ -46,4 +46,19 @@ public class ticketEmpresa extends abstractTicket{
         }
         super.close();
     }
+    public Service getService(int index) {
+        if (index < 0 || index >= contadorServicios) {
+            throw new IndexOutOfBoundsException();
+        }
+        return services[index];
+    }
+    public int getContadorServicios(){
+        return contadorServicios;
+    }
+    public int getItemsCount(){
+        return contador;
+    }
+    public TicketItem getItem(int i) {
+        return items[i];
+    }
 }

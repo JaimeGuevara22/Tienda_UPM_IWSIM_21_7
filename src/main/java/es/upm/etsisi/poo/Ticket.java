@@ -91,6 +91,12 @@ public class Ticket extends abstractTicket{
     public int getItemsCount() {
         return contador;
     }
+    public TicketItem getItem(int index) {
+        if (index < 0 || index >= contador) {
+            throw new IndexOutOfBoundsException();
+        }
+        return items[index];
+    }
     @Override
     public void printTicket() {
         if (contador == 0) {  // No hay items en el ticket
