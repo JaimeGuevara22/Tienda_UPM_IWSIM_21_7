@@ -355,9 +355,32 @@ public class App {
                             System.out.println("Ticket already closed");
                             break;
                         }
-
                         String ticketId = parts[2];
                         String cashId = parts[3];
+                        String itemS = parts[4];
+
+                        if (itemS.endsWith("S")) {
+
+                            if (!(ticket instanceof ticketEmpresa empresa)) {
+                                System.out.println("Error: servicios solo disponibles para tickets de empresa.");
+                                return;
+                            }
+
+                            Service service = catalog.getProductByIdServicio(itemS);
+                            if (service == null) {
+                                System.out.println("Ticket add: Error - service not found");
+                                return;
+                            }
+
+                            empresa.addService(service);
+                            ticket.activate();
+
+                            System.out.println("Ticket: " + ticket.getTicketId());
+                            System.out.println(service);
+                            System.out.println("ticket add: ok\n");
+                            return;
+                        }
+
                         String itemId = parts[4];
                         int cantidad = Integer.parseInt(parts[5]);
 
@@ -365,27 +388,10 @@ public class App {
                             System.out.println("Ticket add: Error - ticket ID mismatch");
                             return;
                         }
-
-                        // Buscar item en catálogo
                         Object item = catalog.getProductById(Integer.parseInt(itemId));
                         if (item == null) {
                             System.out.println("Ticket add: Error - item not found");
                             break;
-                        }
-                        if (item instanceof Service service){
-                            if(!(ticket instanceof  ticketEmpresa empresa)){
-                                System.out.println("Error: servicios solo disponibles para tickets de empresa.");
-                            }
-                            ticketEmpresa empresa = (ticketEmpresa) ticket;
-                            if (!empresa.addService(service)) {
-                                System.out.println("Error no se ha podido añadir empresa.");
-                                return;
-                            }
-                            ticket.activate();
-                            System.out.println("Ticket: "+ticket.getTicketId());
-                            System.out.println(service);
-                            System.out.println("ticket add: ok\n");
-                            return;
                         }
                         if (!(item instanceof  Productos prod)){
                             System.out.println("Error elemento inválido.");
@@ -476,15 +482,15 @@ public class App {
                     if (parts[parts.length - 1].startsWith("-")) {
                         opcion = parts[parts.length - 1].charAt(1);
                     }
-                    if (parts.length == 3) {
-                        System.out.println("ticket new: error de formato");
-                        return;
+                    int longitud = parts.length;
+                    if(opcion != 'p'){
+                        longitud--;
                     }
-                    else if (parts.length == 4) {
+                    if (longitud == 4) {
                         cashId = parts[2];
                         clientId = parts[3];
                     }
-                    else if (parts.length == 5) {
+                    else if (longitud == 5) {
                         id = parts[2];
                         cashId = parts[3];
                         clientId = parts[4];
