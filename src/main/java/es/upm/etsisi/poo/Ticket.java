@@ -39,6 +39,7 @@ public class Ticket extends abstractTicket{
 
         return false;
     }
+    @Override
     public boolean removeItem(int id) {
         for (int i = 0; i < contador; i++) {
             if (items[i].getId() == id) {

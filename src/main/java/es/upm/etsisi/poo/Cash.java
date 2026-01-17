@@ -46,7 +46,7 @@ public class Cash extends User{
     public ArrayList<abstractTicket> getTickets() {
         return tickets;
     }
-    public void addTicket(Ticket ticket) {
+    public void addTicket(abstractTicket ticket) {
         tickets.add(ticket);
     }
 

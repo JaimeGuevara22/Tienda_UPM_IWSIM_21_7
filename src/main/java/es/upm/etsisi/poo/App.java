@@ -20,7 +20,7 @@ public class App {
     private static cashController listCash = new cashController();
 
     private static ClientController listClient = new ClientController();
-    private static List<Ticket> listTicket = new ArrayList<Ticket>();
+    private static List<abstractTicket> listTicket = new ArrayList<>();
 
     public static void main(String[] args) {
         String ticketId = null;
@@ -328,16 +328,34 @@ public class App {
 
                         if (!ticket.getTicketId().equals(ticketId)) {
                             System.out.println("Ticket add: Error - ticket ID mismatch");
-                            break;
+                            return;
                         }
 
                         // Buscar item en catálogo
-                        Productos item = catalog.getProductById(Integer.parseInt(itemId));
+                        Object item = catalog.getProductById(Integer.parseInt(itemId));
                         if (item == null) {
                             System.out.println("Ticket add: Error - item not found");
                             break;
                         }
-
+                        if (item instanceof Service service){
+                            if(!(ticket instanceof  ticketEmpresa empresa)){
+                                System.out.println("Error: servicios solo disponibles para tickets de empresa.");
+                            }
+                            ticketEmpresa empresa = (ticketEmpresa) ticket;
+                            if (!empresa.addService(service)) {
+                                System.out.println("Error no se ha podido añadir empresa.");
+                                return;
+                            }
+                            ticket.activate();
+                            System.out.println("Ticket: "+ticket.getTicketId());
+                            System.out.println(service);
+                            System.out.println("ticket add: ok\n");
+                            return;
+                        }
+                        if (!(item instanceof  Productos prod)){
+                            System.out.println("Error elemento inválido.");
+                        }
+                        Productos prod = (Productos) item;
                         if (ticket.getItemsCount() + cantidad > 100) {
                             System.out.println("Ticket add: Error - cannot add, exceeds maximum 100 items per ticket");
                             break;
@@ -374,13 +392,13 @@ public class App {
                             }
 
                         } else {
-                            TicketItem newItem = new TicketItem(item, cantidad);
+                            TicketItem newItem = new TicketItem(prod, cantidad);
                             if (!ticket.addItem(newItem)) {
                                 System.out.println("Ticket add: Error - cannot add item");
                             }
                         }
 
-                        ticket.setState(TicketState.OPEN);
+                        ticket.activate();
                         System.out.println("Ticket: " + ticket.getTicketId());
                         if (item instanceof Meetings m) {
                             double precioUnitario = m.getPrecio();
@@ -408,9 +426,7 @@ public class App {
 
                 case "remove" -> {
                     int prodId = Integer.parseInt(parts[parts.length - 1]);
-                    Productos removed = catalog.getProductById(prodId);
                     if (ticket.removeItem(prodId)) {
-                        System.out.println("Ticket: "+ticket.getTicketId());
                         ticket.printTicket();
                         System.out.println("ticket remove: ok");
                     } else {
@@ -459,7 +475,10 @@ public class App {
                         switch (opcion) {
                             case 's' -> printer = new printerSoloServicios();
                             case 'c' -> printer = new printerCombinado();
-                            default -> System.out.println("Empresa debe usar -s o -c");
+                            default -> {
+                                System.out.println("Empresa debe usar -s o -c");
+                                return;
+                            }
                         }
 
                         t = new ticketEmpresa(id, cashId, printer);
@@ -478,10 +497,8 @@ public class App {
                     System.out.println("  Final Price: 0.0");
                     System.out.println("ticket new: ok");
                     System.out.println();
-                    return;
                 }
                 case "print" -> {
-                    ticket.close();
                     ticket.printTicket();
                     System.out.println("ticket print: ok");
                     System.out.println();
@@ -491,9 +508,9 @@ public class App {
                         System.out.println("There is no tickets in the ticketList.");
                         return;
                     }
-                    List<Ticket> copia = new ArrayList<>(listTicket);
-                    copia.sort(Comparator.comparing(Ticket::getTicketId));
-                    for(Ticket t : copia){
+                    List<abstractTicket> copia = new ArrayList<>(listTicket);
+                    copia.sort(Comparator.comparing(abstractTicket::getTicketId));
+                    for(abstractTicket t : copia){
                         System.out.println(t.getTicketId()+ " - "+t.getState());
                     }
                     System.out.println("ticket list: ok");
@@ -570,10 +587,10 @@ public class App {
                         System.out.println("Error: cash not found.");
                         return;
                     }
-                    List<Ticket> ticketsCash = cash.getTickets();
-                    ticketsCash.sort(Comparator.comparing(Ticket::getTicketId)); //para ordenar por id
+                    List<abstractTicket> ticketsCash = cash.getTickets();
+                    ticketsCash.sort(Comparator.comparing(abstractTicket::getTicketId)); //para ordenar por id
                     System.out.println("Tickets:");
-                    for(Ticket t : ticketsCash){
+                    for(abstractTicket t : ticketsCash){
                         System.out.println(t.getTicketId()+"->"+t.getState());
                     }
                     System.out.println("cash tickets: ok");
