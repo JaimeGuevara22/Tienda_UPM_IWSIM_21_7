@@ -105,5 +105,4 @@ public abstract class abstractTicket {
     public abstract void printTicket();
     public abstract boolean addItem(TicketItem nuevo);
     public abstract int getItemsCount();
-    public abstract boolean removeItem(int id);
 }

@@ -7,11 +7,14 @@ import java.time.temporal.ChronoUnit;
 public class ProductCatalog {
     private int contador;
     private Productos[] items;
+    private Service[] servicios;
 
     public ProductCatalog() {
         this.items = new Productos[200];
+        this.servicios = new Service[200];
         this.contador = 0;
     }
+
 
 
     public Productos getProductById(int id) {
@@ -22,9 +25,17 @@ public class ProductCatalog {
         }
         return null;
     }
+    public Service getProductByIdServicio(String id) {
+        for (Service p : servicios) {
+            if(p != null && p.getServiceId().equalsIgnoreCase(id)){
+                return p;
+            }
+        }
+        return null;
+    }
 
     public boolean addProduct(Productos item) {
-        if (contador >= items.length) {
+        if (contador >= 200) {
             return false;
         }
         int id = item.getId();
@@ -43,7 +54,7 @@ public class ProductCatalog {
             Meetings m = (Meetings) item;
             long horas = ChronoUnit.HOURS.between(LocalDateTime.now(), m.getMeetingsExpirationDate().atStartOfDay());
 
-            if (horas< 12 || contador >= 100) return false;
+            if (horas < 12 || contador >= 100) return false;
         }
         for (int i = 0; i < items.length; i++) {
             if (items[i] == null) {
@@ -63,6 +74,26 @@ public class ProductCatalog {
         return false;
     }
 
+    public boolean addService (Service servicio) {
+        if (contador >= 200) {
+            return false;
+        }
+        if (ChronoUnit.DAYS.between(LocalDate.now(), servicio.getExpirationDate()) < 1) {
+            return false;
+        }
+        for (int i = 0; i < servicios.length; i++) {
+            if (servicios[i] != null && servicios[i].getServiceId().equals(servicio.getServiceId())) {
+                return false;
+            }
+            if (servicios[i] == null) {
+                servicios[i] = servicio;
+                contador++;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean remove(int id) {
         for (int i = 0; i < items.length; i++) {
             if (items[i] != null && items[i].getId() == id) {
@@ -70,6 +101,23 @@ public class ProductCatalog {
                     items[j] = items[j + 1];
                 }
                 items[items.length - 1] = null;
+                contador--;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean removeService(String id) {
+        
+        if (id == null || !id.endsWith("S")) {
+            return false;
+        }
+        for (int i = 0; i < servicios.length; i++) {
+            if (servicios[i] != null && servicios[i].getServiceId().equalsIgnoreCase(id)) {
+                for (int j = i + 1; i < servicios.length; i++ ) {
+                    servicios[j - 1] = servicios[j];
+                }
                 contador--;
                 return true;
             }
@@ -113,6 +161,13 @@ public class ProductCatalog {
     }
 
     public void listProducts() {
+        System.out.println("Catalogo servicios");
+        for (Service service : servicios) {
+            if (servicios != null) {
+                System.out.println(service.toString());
+            }
+        }
+        System.out.println("Catalogo productos:");
         for (Productos product : items) {
             if (product != null) {
                 System.out.println(product.toString());

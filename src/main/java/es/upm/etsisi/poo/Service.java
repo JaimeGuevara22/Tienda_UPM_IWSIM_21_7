@@ -2,7 +2,7 @@ package es.upm.etsisi.poo;
 
 import java.time.LocalDate;
 
-public class Service extends ProductService{
+public class Service {
     private static int sec = 1;
     private final int id;
     private final LocalDate expirationDate;
@@ -35,6 +35,6 @@ public class Service extends ProductService{
     }
     @Override
     public String toString() {
-        return "{class:ProductService,  category:" + type + ", expiration:" + expirationDate + "}";
+        return "{class:ProductService, expiration:" + expirationDate + " category:" + type + "}";
     }
 }

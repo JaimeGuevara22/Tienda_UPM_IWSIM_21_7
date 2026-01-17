@@ -198,9 +198,11 @@ public class App {
                                     System.out.println("Fail: product not added\n");
                                 }
                             } else {
-                                if (servicio) {
-                                    System.out.println("Servicio");
-                                }
+                                if (catalog.addService(service)) {
+                                    System.out.println(service.getServiceId());
+                                    System.out.println(service.toString());
+                                    System.out.println("prod add: ok\n");
+                                } else System.out.println("Fail: product not added\n");
                             }
                         } catch (Exception e) {
                             System.out.println("Fail: Product not added\n");
