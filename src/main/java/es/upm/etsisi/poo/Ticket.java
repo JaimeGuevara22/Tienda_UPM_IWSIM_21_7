@@ -39,17 +39,6 @@ public class Ticket extends abstractTicket{
 
         return false;
     }
-    public boolean removeItem(int id) {
-        for (int i = 0; i < contador; i++) {
-            if (items[i].getId() == id) {
-                items[i] = items[contador - 1]; // Reemplazamos por el último
-                items[contador - 1] = null;
-                contador--;
-                return true;
-            }
-        }
-        return false;
-    }
 
     public double getTotalSinDescuento() {
         double total = 0.0;

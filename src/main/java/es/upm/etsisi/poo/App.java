@@ -20,7 +20,7 @@ public class App {
     private static cashController listCash = new cashController();
 
     private static ClientController listClient = new ClientController();
-    private static List<Ticket> listTicket = new ArrayList<Ticket>();
+    private static List<abstractTicket> listTicket = new ArrayList<abstractTicket>();
 
     public static void main(String[] args) {
         String ticketId = null;
@@ -454,12 +454,15 @@ public class App {
                     }
                     abstractTicket t;
                     if (client.esEmpresa()) {
-                        ticketPrinter printer;
+                        ticketPrinter printer = null;
 
                         switch (opcion) {
                             case 's' -> printer = new printerSoloServicios();
                             case 'c' -> printer = new printerCombinado();
-                            default -> System.out.println("Empresa debe usar -s o -c");
+                            default -> {
+                                System.out.println("Empresa debe usar -s o -c");
+                                printer = new printerCombinado(); // Default printer
+                            }
                         }
 
                         t = new ticketEmpresa(id, cashId, printer);
@@ -491,9 +494,9 @@ public class App {
                         System.out.println("There is no tickets in the ticketList.");
                         return;
                     }
-                    List<Ticket> copia = new ArrayList<>(listTicket);
-                    copia.sort(Comparator.comparing(Ticket::getTicketId));
-                    for(Ticket t : copia){
+                    List<abstractTicket> copia = new ArrayList<>(listTicket);
+                    copia.sort(Comparator.comparing(abstractTicket::getTicketId));
+                    for(abstractTicket t : copia){
                         System.out.println(t.getTicketId()+ " - "+t.getState());
                     }
                     System.out.println("ticket list: ok");
@@ -570,10 +573,10 @@ public class App {
                         System.out.println("Error: cash not found.");
                         return;
                     }
-                    List<Ticket> ticketsCash = cash.getTickets();
-                    ticketsCash.sort(Comparator.comparing(Ticket::getTicketId)); //para ordenar por id
+                    List<abstractTicket> ticketsCash = cash.getTickets();
+                    ticketsCash.sort(Comparator.comparing(abstractTicket::getTicketId)); //para ordenar por id
                     System.out.println("Tickets:");
-                    for(Ticket t : ticketsCash){
+                    for(abstractTicket t : ticketsCash){
                         System.out.println(t.getTicketId()+"->"+t.getState());
                     }
                     System.out.println("cash tickets: ok");

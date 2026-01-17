@@ -90,6 +90,18 @@ public abstract class abstractTicket {
         this.state = state;
     }
 
+    public boolean removeItem(int id) {
+        for (int i = 0; i < contador; i++) {
+            if (items[i].getId() == id) {
+                items[i] = items[contador - 1]; // Reemplazamos por el último
+                items[contador - 1] = null;
+                contador--;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public abstract void printTicket();
     public abstract boolean addItem(TicketItem nuevo);
     public abstract int getItemsCount();
