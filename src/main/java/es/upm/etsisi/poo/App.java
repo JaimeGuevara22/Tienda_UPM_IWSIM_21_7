@@ -91,7 +91,6 @@ public class App {
             e.printStackTrace();
         } finally {
             if (sc != null) sc.close();
-            System.out.println("prueba");
         }
     }
     private static void help() {
