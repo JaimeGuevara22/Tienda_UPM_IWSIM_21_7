@@ -62,4 +62,8 @@ public class ticketEmpresa extends abstractTicket{
     public TicketItem getItem(int i) {
         return items[i];
     }
+    @Override
+    public boolean removeItem(int id) {
+        return false;
+    }
 }
