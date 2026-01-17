@@ -174,7 +174,6 @@ public class App {
                                 product = new Product(id, name, price, Category.valueOf(categoria));
                             }
                             } else {
-                                System.out.println("dentro de servicio");
                                 ServiceType tipoServicio;
                                 switch (parts[3].toUpperCase()) {
                                     case "TRANSPORT":
