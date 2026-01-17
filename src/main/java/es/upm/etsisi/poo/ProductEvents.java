@@ -1,7 +1,6 @@
 package es.upm.etsisi.poo;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public abstract class ProductEvents extends Productos{
     protected LocalDate expirationDate;

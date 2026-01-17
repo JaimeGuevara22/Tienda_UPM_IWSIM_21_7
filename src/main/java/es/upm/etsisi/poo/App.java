@@ -104,8 +104,8 @@ public class App {
                         "  cash list \n"+
                         "  cash tickets <id> \n"+
                         "  ticket new [<id>] <cashID> <userID> \n" +
-                        "  ticket add <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]\n" +
-                        "  ticket remove <ticketId><cashId> <prodId>\n" +
+                        "  ticket add <ticketId> <cashId> <prodId> <amount> [--p<txt> --p<txt>]\n" +
+                        "  ticket remove <ticketId> <cashId> <prodId>\n" +
                         "  ticket print <ticketId> <cashId>\n" +
                         "  ticket list \n"+
                         "  prod add <id> \"<name>\" <category> <price>\n" +
@@ -136,47 +136,75 @@ public class App {
 
             switch (subcommand.toLowerCase()) {
                 case "add" -> {
+                    boolean servicio = true;
+                    Productos product = null;
+                    Service service = null;
                     try {
+                        LocalDate fechaServicio = null;
                         // Id siempre es la segunda palabra
-                        int id = Integer.parseInt(parts[2]);
+                        try {
+                                fechaServicio = LocalDate.parse(parts[2]);
+                            } catch (Exception e) {
+                                servicio = false;
+                            }
+                            if (!servicio) {
+                            int id = Integer.parseInt(parts[2]);
+                            int primeraComilla = input.indexOf('"');
+                            int ultimaComilla = input.lastIndexOf('"');
+                            if (primeraComilla == -1 || ultimaComilla == -1 || ultimaComilla == primeraComilla) {
+                                System.out.println("Fail: invalid name format");
+                                break;
+                            }
+                            String name = input.substring(primeraComilla + 1, ultimaComilla);
 
-                        int primeraComilla = input.indexOf('"');
-                        int ultimaComilla = input.lastIndexOf('"');
-                        if (primeraComilla == -1 || ultimaComilla == -1 || ultimaComilla == primeraComilla) {
-                            System.out.println("Fail: invalid name format");
-                            break;
-                        }
-                        String name = input.substring(primeraComilla + 1, ultimaComilla);
+                            String afterName = input.substring(ultimaComilla + 1).trim();
+                            String[] tail = afterName.split(" ");
+                            
+                            if (tail.length < 2) {
+                                System.out.println("Fail: invalid parameters");
+                                break;
+                            }
 
-                        String afterName = input.substring(ultimaComilla + 1).trim();
-                        String[] tail = afterName.split(" ");
-
-                        if (tail.length < 2) {
-                            System.out.println("Fail: invalid parameters");
-                            break;
-                        }
-
-                        String categoria = tail[0];
-                        double price = Double.parseDouble(tail[1]);
-
-                        Productos product;
-
-                        if (tail.length == 3) {
-                            int maxPersonal = Integer.parseInt(tail[2]);
-                            product = new ProductosPersonalizables(id, name, price, Category.valueOf(categoria), maxPersonal);
-                        } else {
-                            product = new Product(id, name, price, Category.valueOf(categoria));
-                        }
-
-                        if (catalog.addProduct(product)) {
-                            System.out.println(product.toString());
-                            System.out.println("prod add: ok\n");
-                        } else {
-                            System.out.println("Fail: product not added\n");
-                        }
-
-                    } catch (Exception e) {
-                        System.out.println("Fail: Product not added\n");
+                            String categoria = tail[0];
+                            double price = Double.parseDouble(tail[1]);
+                            if (tail.length == 3) {
+                                int maxPersonal = Integer.parseInt(tail[2]);
+                                product = new ProductosPersonalizables(id, name, price, Category.valueOf(categoria), maxPersonal);
+                            } else {
+                                product = new Product(id, name, price, Category.valueOf(categoria));
+                            }
+                            } else {
+                                System.out.println("dentro de servicio");
+                                ServiceType tipoServicio;
+                                switch (parts[3].toUpperCase()) {
+                                    case "TRANSPORT":
+                                        tipoServicio = ServiceType.TRANSPORT;
+                                        break;
+                                    case "SHOW":
+                                        tipoServicio = ServiceType.SHOW;
+                                        break;
+                                    case "INSURANCE":
+                                        tipoServicio = ServiceType.INSURANCE;
+                                        break;
+                                    default:
+                                        throw new Exception("Servicio no existente");
+                                }
+                                service = new Service(fechaServicio, tipoServicio);
+                            }
+                            if (!servicio) {
+                                if (catalog.addProduct(product)) {
+                                    System.out.println(product.toString());
+                                    System.out.println("prod add: ok\n");
+                                } else {
+                                    System.out.println("Fail: product not added\n");
+                                }
+                            } else {
+                                if (servicio) {
+                                    System.out.println("Servicio");
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.out.println("Fail: Product not added\n");
                     }
                 }
                 case "addfood" -> {
@@ -272,21 +300,27 @@ public class App {
                     int id;
                     try {
                         id = Integer.parseInt(parts[2]);
-                        StringBuilder nameBuilder = new StringBuilder();
-                        for (int i = 3; i < parts.length - 3; i++) {
-                            nameBuilder.append(parts[i].replace("\"", ""));
-                            nameBuilder.append(" ");
+                        int primerasComillas = input.indexOf('"');
+                        int ultimasComillas = input.lastIndexOf('"');
+                        if(primerasComillas == -1 || ultimasComillas == primerasComillas){
+                            System.out.println("Nombre no válido");
+                            return;
                         }
-                        String name = nameBuilder.toString();
-                        double price = Double.parseDouble(parts[parts.length - 3]);
-                        LocalDate date = LocalDate.parse(parts[parts.length - 2]);
-                        int max_people = Integer.parseInt(parts[parts.length - 1]);
+                        String name = input.substring(primerasComillas + 1, ultimasComillas);//intervalo del nombre
+                        String [] resto = input.substring(ultimasComillas + 1).trim().split(" ");
+                        if(resto.length != 3){
+                            System.out.println("Parámetros no válidos");
+                            return;
+                        }
+                        double price = Double.parseDouble(resto[0]);
+                        LocalDate date = LocalDate.parse(resto[1]);
+                        int max_people = Integer.parseInt(resto[2]);
                         Productos meetings = new Meetings(date, max_people, price, id, name);
                         if (catalog.addProduct(meetings)) {
                             System.out.println(meetings);
                             System.out.println("prod addMeeting: ok");
                         } else {
-                            System.out.println("Error processing ->prod addMeeting ->Error adding product");
+                            System.out.println("Error product not added");
                         }
                     } catch (IllegalArgumentException e) {
                         System.out.println("Error processing ->prod addMeeting ->Error adding product");

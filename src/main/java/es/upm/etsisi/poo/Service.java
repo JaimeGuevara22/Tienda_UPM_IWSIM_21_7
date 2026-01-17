@@ -2,7 +2,7 @@ package es.upm.etsisi.poo;
 
 import java.time.LocalDate;
 
-public class Service implements sellable{
+public class Service extends ProductService{
     private static int sec = 1;
     private final int id;
     private final LocalDate expirationDate;
@@ -25,15 +25,16 @@ public class Service implements sellable{
         return expirationDate;
     }
     public boolean isValid(LocalDate date){
+        if(date == null){
+            throw new IllegalArgumentException("date cannot be null");
+        }
         if(date.isAfter(expirationDate)){
             return false;
-        }else if(date == null){
-            throw new IllegalArgumentException("date cannot be null");
         }
         return true;
     }
     @Override
     public String toString() {
-        return "{class:ProductService, id:" + getServiceId() + ", category:" + type + ", expiration:" + expirationDate + "}";
+        return "{class:ProductService,  category:" + type + ", expiration:" + expirationDate + "}";
     }
 }

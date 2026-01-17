@@ -1,6 +1,5 @@
 package es.upm.etsisi.poo;
-import java.time.LocalDateTime;
-import java.util.*;
+
 public class ticketEmpresa extends abstractTicket{
     private ticketPrinter printer;
     private Service[] services;
