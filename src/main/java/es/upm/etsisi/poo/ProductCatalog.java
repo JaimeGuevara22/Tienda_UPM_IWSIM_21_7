@@ -5,14 +5,16 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class ProductCatalog {
-    private int contador;
+    private int contadorProductos;
+    private int contadorServicios;
     private Productos[] items;
     private Service[] servicios;
 
     public ProductCatalog() {
         this.items = new Productos[200];
         this.servicios = new Service[200];
-        this.contador = 0;
+        this.contadorProductos = 0;
+        this.contadorServicios = 0;
     }
 
 
@@ -35,7 +37,7 @@ public class ProductCatalog {
     }
 
     public boolean addProduct(Productos item) {
-        if (contador >= 200) {
+        if (contadorProductos + contadorServicios >= 200) {
             return false;
         }
         int id = item.getId();
@@ -48,18 +50,18 @@ public class ProductCatalog {
         if (item instanceof Food) {
             Food f = (Food) item;
             long days = ChronoUnit.DAYS.between(LocalDate.now(), f.getFoodExpirationDate());
-            if (days < 3 || contador >= 100) return false;
+            if (days < 3 || contadorProductos + contadorServicios >= 100) return false;
         }
         if (item instanceof Meetings) {
             Meetings m = (Meetings) item;
             long horas = ChronoUnit.HOURS.between(LocalDateTime.now(), m.getMeetingsExpirationDate().atStartOfDay());
 
-            if (horas < 12 || contador >= 100) return false;
+            if (horas < 12 || contadorProductos + contadorServicios >= 100) return false;
         }
         for (int i = 0; i < items.length; i++) {
             if (items[i] == null) {
                 items[i] = item;
-                contador++;
+                contadorProductos++;
                 return true;
             }
             if (items[i].getId() > id) {
@@ -67,7 +69,7 @@ public class ProductCatalog {
                     items[j] = items[j - 1];
                 }
                 items[i] = item;
-                contador++;
+                contadorProductos++;
                 return true;
             }
         }
@@ -75,7 +77,7 @@ public class ProductCatalog {
     }
 
     public boolean addService (Service servicio) {
-        if (contador >= 200) {
+        if (contadorProductos + contadorServicios >= 200) {
             return false;
         }
         if (ChronoUnit.DAYS.between(LocalDate.now(), servicio.getExpirationDate()) < 1) {
@@ -87,7 +89,7 @@ public class ProductCatalog {
             }
             if (servicios[i] == null) {
                 servicios[i] = servicio;
-                contador++;
+                contadorServicios++;
                 return true;
             }
         }
@@ -101,12 +103,29 @@ public class ProductCatalog {
                     items[j] = items[j + 1];
                 }
                 items[items.length - 1] = null;
-                contador--;
+                contadorProductos--;
                 return true;
             }
         }
         return false;
     }
+
+    public boolean removeService(String id) {
+        if (id == null || !id.endsWith("S")) {
+            return false;
+        }
+        for (int i = 0; i < servicios.length; i++) {
+            if (servicios[i] != null && servicios[i].getServiceId().equalsIgnoreCase(id)) {
+                for (int j = i + 1; j < servicios.length; j++) {
+                    servicios[j - 1] = servicios[j];
+                }
+                contadorServicios--;
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean updateField(int id, String field, String value) {
         Productos p = getProductById(id);
             if (p == null) return false;
@@ -143,17 +162,24 @@ public class ProductCatalog {
     }
 
     public void listProducts() {
-        System.out.println("Catalogo servicios");
-        for (Service service : servicios) {
-            if (service != null) {
-                System.out.println(service.toString());
+        if (contadorServicios != 0) {
+            System.out.println("Catalogo servicios: ");
+            for (Service service : servicios) {
+                if (service != null) {
+                    System.out.println(service.toString());
+                }
             }
         }
-        System.out.println("Catalogo productos:");
-        for (Productos product : items) {
-            if (product != null) {
-                System.out.println(product.toString());
+        if (contadorProductos != 0) {
+            System.out.println("Catalogo productos: ");
+            for (Productos product : items) {
+                if (product != null) {
+                    System.out.println(product.toString());
+                }
             }
+        }
+        if (contadorProductos == 0 && contadorServicios == 0) {
+            System.out.println("Catalogo vacío");
         }
     }
 }

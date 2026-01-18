@@ -147,7 +147,12 @@ public class App {
                                 servicio = false;
                             }
                             if (!servicio) {
-                            int id = Integer.parseInt(parts[2]);
+                                int id;
+                            try {
+                                id = Integer.parseInt(parts[2]);
+                            } catch (Exception e) {
+                                id = 0;
+                            }
                             int primeraComilla = input.indexOf('"');
                             int ultimaComilla = input.lastIndexOf('"');
                             if (primeraComilla == -1 || ultimaComilla == -1 || ultimaComilla == primeraComilla) {
@@ -172,38 +177,38 @@ public class App {
                             } else {
                                 product = new Product(id, name, price, Category.valueOf(categoria));
                             }
-                            } else {
-                                ServiceType tipoServicio;
-                                switch (parts[3].toUpperCase()) {
-                                    case "TRANSPORT":
+                        } else {
+                            ServiceType tipoServicio;
+                            switch (parts[3].toUpperCase()) {
+                                case "TRANSPORT":
                                         tipoServicio = ServiceType.TRANSPORT;
                                         break;
-                                    case "SHOW":
+                                case "SHOW":
                                         tipoServicio = ServiceType.SHOW;
                                         break;
-                                    case "INSURANCE":
+                                case "INSURANCE":
                                         tipoServicio = ServiceType.INSURANCE;
                                         break;
-                                    default:
+                                default:
                                         throw new Exception("Servicio no existente");
-                                }
-                                service = new Service(fechaServicio, tipoServicio);
                             }
-                            if (!servicio) {
-                                if (catalog.addProduct(product)) {
-                                    System.out.println(product.toString());
-                                    System.out.println("prod add: ok\n");
-                                } else {
-                                    System.out.println("Fail: product not added\n");
-                                }
+                            service = new Service(fechaServicio, tipoServicio);
+                        }
+                        if (!servicio) {
+                            if (catalog.addProduct(product)) {
+                                System.out.println(product.toString());
+                                System.out.println("prod add: ok\n");
                             } else {
-                                if (catalog.addService(service)) {
-                                    System.out.println(service.getServiceId());
-                                    System.out.println(service.toString());
-                                    System.out.println("prod add: ok\n");
-                                } else System.out.println("Fail: product not added\n");
+                                System.out.println("Fail: product not added\n");
                             }
-                        } catch (Exception e) {
+                        } else {
+                            if (catalog.addService(service)) {
+                                System.out.println(service.getServiceId());
+                                System.out.println(service.toString());
+                                System.out.println("prod add: ok\n");
+                            } else System.out.println("Fail: product not added\n");
+                        }
+                    } catch (Exception e) {
                             System.out.println("Fail: Product not added\n");
                     }
                 }
@@ -240,8 +245,7 @@ public class App {
                     }catch (DateTimeParseException e) {
                         System.out.println("Error processing ->prod addFood ->Error adding product");
                     }
-                }case "list" -> {
-                    System.out.println("Catalog:");
+                } case "list" -> {
                     catalog.listProducts();
                     System.out.println("prod list: ok");
                     System.out.println();
@@ -285,15 +289,36 @@ public class App {
                 }
 
                 case "remove" -> {
-                    int id = Integer.parseInt(parts[2]);
-                    Productos removed = catalog.getProductById(id);
-                    if (catalog.remove(id)) {
-                        System.out.println(removed.toString());
-                        System.out.println("prod remove: ok");
-                    } else {
-                        System.out.println("Fail: product not removed");
+                    int id = 0;
+                    Productos removed = null;
+                    String idSer = "";
+                    Service removedSer = null;
+                    boolean servicio = false;
+                    try {
+                    id = Integer.parseInt(parts[2]);
+                    removed = catalog.getProductById(id);
+                    } catch (Exception e) {
+                        servicio = true;
+                        idSer = parts[2];
+                        removedSer = catalog.getProductByIdServicio(idSer);
                     }
-                    System.out.println();
+                    if (!servicio) {
+                        if (catalog.remove(id)) {
+                            System.out.println(removed.toString());
+                            System.out.println("prod remove: ok");
+                        } else {
+                            System.out.println("Fail: product not removed");
+                        }
+                        System.out.println();
+                    } else {
+                        if (catalog.removeService(idSer)) {
+                            System.out.println(removedSer.toString());
+                            System.out.println("prod remove: ok");
+                        } else {
+                            System.out.println("Fail: product not removed");
+                        }
+                        System.out.println();
+                    } 
                 }
                 case "addmeeting" -> {
                     int id;
