@@ -96,19 +96,19 @@ public class App {
     private static void help() {
         System.out.println(
                 "Commands:\n" +
-                        "  client add \"<nombre>\" <DNI> <email> <cashID> \n"+
+                        "  client add \"<nombre>\" (<DNI>|<NIF>) <email> <cashID> \n"+
                         "  client remove <DNI> \n"+
                         "  client list \n"+
                         "  cash add [<id>] \"<nombre>\" <email> \n"+
                         "  cash remove <id> \n"+
                         "  cash list \n"+
                         "  cash tickets <id> \n"+
-                        "  ticket new [<id>] <cashID> <userID> \n" +
+                        "  ticket new [<id>] <cashID> <userID> -[c|p|s] (default -p option) \n" +
                         "  ticket add <ticketId> <cashId> <prodId> <amount> [--p<txt> --p<txt>]\n" +
                         "  ticket remove <ticketId> <cashId> <prodId>\n" +
                         "  ticket print <ticketId> <cashId>\n" +
                         "  ticket list \n"+
-                        "  prod add <id> \"<name>\" <category> <price>\n" +
+                        "  prod add ([<id>] \"<name>\" <category> <price> [<maxPers>]) || (<expiration:yyyy-MM-dd> <category>) \n" +
                         "  prod update <id> NAME|CATEGORY|PRICE <value>\n" +
                         "  prod addFood [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n"+
                         "  prod addMeeting [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n"+
