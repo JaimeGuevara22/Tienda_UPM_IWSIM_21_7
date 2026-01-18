@@ -1,42 +1,70 @@
 package es.upm.etsisi.poo;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class cashController {
-    private List<Cash> cashes = new ArrayList<>();
 
-    public boolean addCash(Cash cash){
-        for(Cash c : cashes){
-            if(c.getCashId().equals(cash.getCashId())){
+    public boolean addCash(Cash cash) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+
+            // Verificamos si ya existe por su ID (cashId)
+            if (session.get(Cash.class, cash.getCashId()) != null) {
                 return false;
             }
+
+            session.persist(cash);
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            return false;
         }
-        cashes.add(cash);
-        return true;
     }
-    public boolean cashRemove(String cashId){
-        for(Cash c : cashes){
-            if(c.getCashId().equals(cashId)){
-                cashes.remove(c);
+
+    public boolean cashRemove(String cashId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Transaction tx = session.beginTransaction();
+
+            Cash cash = session.get(Cash.class, cashId);
+            if (cash != null) {
+                session.remove(cash);
+                tx.commit();
                 return true;
             }
-        }
-        return false;
-    }
-    public void list(){
-        Collections.sort(cashes, (c1, c2) -> c1.getNombre().compareToIgnoreCase(c2.getNombre()));
-        for(Cash c : cashes){
-            System.out.println(c.toString());
+            return false;
+        } catch (Exception e) {
+            return false;
         }
     }
-    public Cash findCashById(String id) {
-        for (Cash c : cashes) {
-            if (c != null && c.getCashId().equals(id)) {
-                return c;
+
+    public void list() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // HQL para obtener todos los cajeros
+            List<Cash> cashes = session.createQuery("from Cash", Cash.class).getResultList();
+
+            // Ordenamos alfabéticamente por nombre
+            cashes.sort((c1, c2) -> c1.getNombre().compareToIgnoreCase(c2.getNombre()));
+
+            if (cashes.isEmpty()) {
+                // Opcional: imprimir algo si está vacío
+            } else {
+                for (Cash c : cashes) {
+                    System.out.println(c.toString());
+                }
             }
+        } catch (Exception e) {
+            // Silencio según enunciado
         }
-        return null;
+    }
+
+    public Cash findCashById(String id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // Buscamos directamente por la clave primaria
+            return session.get(Cash.class, id);
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

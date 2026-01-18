@@ -1,7 +1,13 @@
 package es.upm.etsisi.poo;
+import jakarta.persistence.*;
 
-public class Product extends Productos implements sellable{
+@Entity
+public class Product extends Productos implements sellable {
+    @Enumerated(EnumType.STRING)
     protected Category category;
+
+    protected Product() {}
+
     public Product(int id, String nombre, double precio, Category categoria) {
         super(id,nombre,precio);
         this.category = categoria;

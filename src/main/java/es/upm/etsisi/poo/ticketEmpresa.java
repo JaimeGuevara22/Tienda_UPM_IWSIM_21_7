@@ -1,69 +1,56 @@
 package es.upm.etsisi.poo;
 
-public class ticketEmpresa extends abstractTicket{
+import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "tickets_empresa")
+public class ticketEmpresa extends abstractTicket { // Quitamos <Object>
+
+    @Transient
     private ticketPrinter printer;
-    private Service[] services;
-    private int contadorServicios;
-    public ticketEmpresa(String ticketId, String cashId,ticketPrinter printer) {
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "ticket_empresa_servicios") // Tabla intermedia para la relación ManyToMany
+    private List<Service> services = new ArrayList<>();
+
+    protected ticketEmpresa() { super(); }
+
+    public ticketEmpresa(String ticketId, String cashId, ticketPrinter printer) {
         super(ticketId, cashId);
         this.printer = printer;
-        this.services = new Service[100];
-        this.contadorServicios = 0;
     }
+
     public boolean addService(Service service) {
-        if(contadorServicios < 100){
-            services[contadorServicios++] = service;
-            return true;
-        }else{
-            return false;
+        if (service != null) {
+            return services.add(service);
         }
+        return false;
     }
-    @Override
-    public void printTicket() {
-        printer.print(this);
-    }
+
     @Override
     public boolean addItem(TicketItem nuevo) {
-        if(contadorServicios == 0){
-            return false;
-        }
-        Productos newProd = nuevo.getItem();
-        if(!(newProd instanceof  Productos)){
-            return false;
-        }
-        items[contador++] = nuevo;
-        return true;
+        if (services.isEmpty()) return false;
+        return itemsList.add(nuevo);
     }
+
+    @Override
+    public void printTicket() {
+        if (printer != null) {
+            printer.print(this);
+        } else {
+            System.out.println("No printer assigned for company ticket");
+        }
+    }
+
     @Override
     public void close() {
-        boolean hayServicios = contadorServicios > 0;
-        boolean hayProductos = contador > 0;
-        if (hayServicios && !hayProductos && contadorServicios > 0 && contador > 0) {
-            throw new IllegalStateException("Ticket combinado inválido");
-        }
-        if(!hayServicios && hayProductos){
+        if (services.isEmpty() && !itemsList.isEmpty()) {
             throw new IllegalStateException("Ticket empresa no puede tener solo productos");
         }
         super.close();
     }
-    public Service getService(int index) {
-        if (index < 0 || index >= contadorServicios) {
-            throw new IndexOutOfBoundsException();
-        }
-        return services[index];
-    }
-    public int getContadorServicios(){
-        return contadorServicios;
-    }
-    @Override
-    public int getItemsCount(){
-        return contador;
-    }
-    public TicketItem getItem(int i) {
-        return items[i];
-    }
-    @Override
-    public boolean removeItem(int id) {
-        return false;
-    }
+
+    public List<Service> getServicesList() { return services; }
 }

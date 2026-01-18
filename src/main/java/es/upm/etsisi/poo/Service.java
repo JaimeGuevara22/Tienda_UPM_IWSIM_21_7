@@ -1,44 +1,61 @@
 package es.upm.etsisi.poo;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Date;
 
+@Entity
+@Table(name = "servicios")
 public class Service {
-    private static int sec = 1;
-    private final int id;
-    private final LocalDate expirationDate;
-    private final ServiceType type;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Hibernate gestiona el ID (1, 2, 3...)
+    private int id;
+
+    private LocalDate expirationDate;
+
+    @Enumerated(EnumType.STRING) // Guarda el nombre del ENUM (ej: "REPAIR") en lugar del número
+    private ServiceType type;
+
+    // Constructor protegido necesario para que Hibernate recupere los datos del disco
+    protected Service() {}
+
     public Service(LocalDate expirationDate, ServiceType type) {
-        if(expirationDate == null){
+        if (expirationDate == null) {
             throw new IllegalArgumentException("expirationDate cannot be null");
         }
         this.expirationDate = expirationDate;
         this.type = type;
-        this.id = sec++;
+        // El ID no se asigna aquí, se genera al hacer session.persist()
     }
+
+    /**
+     * Devuelve el ID formateado como pide el enunciado (ej: "1S").
+     */
     public String getServiceId() {
         return id + "S";
     }
-    public ServiceType getType() { //borrar en caso de no ser necesario
+
+    public ServiceType getType() {
         return type;
     }
-    public LocalDate getExpirationDate() { //borrar en caso de no ser necesario
+
+    public LocalDate getExpirationDate() {
         return expirationDate;
     }
-    public boolean isValid(LocalDate date){
-        if(date == null){
+
+    public boolean isValid(LocalDate date) {
+        if (date == null) {
             throw new IllegalArgumentException("date cannot be null");
         }
-        if(date.isAfter(expirationDate)){
-            return false;
-        }
-        return true;
+        return !date.isAfter(expirationDate);
     }
+
     @Override
     public String toString() {
-        Date date = Date.from(expirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return "{class:ProductService, category: " +type+" expiration:" + date + "}";
+        // Formato exacto para el catálogo: {class:ProductService, category: TYPE, expiration: YYYY-MM-DD}
+        // Nota: He incluido el ID para facilitar el seguimiento en consola
+        return "{class:ProductService, id: " + getServiceId() +
+                ", category: " + type +
+                ", expiration: " + expirationDate + "}";
     }
 }

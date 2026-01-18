@@ -23,6 +23,7 @@ public class App {
     private static List<abstractTicket> listTicket = new ArrayList<abstractTicket>();
 
     public static void main(String[] args) {
+        java.util.logging.Logger.getLogger("org.hibernate").setLevel(java.util.logging.Level.SEVERE);
         String ticketId = null;
         String cashId = null;
         Scanner sc = null;
@@ -142,12 +143,12 @@ public class App {
                     try {
                         LocalDate fechaServicio = null;
                         try {
-                                fechaServicio = LocalDate.parse(parts[2]);
-                            } catch (Exception e) {
-                                servicio = false;
-                            }
-                            if (!servicio) {
-                                int id;
+                            fechaServicio = LocalDate.parse(parts[2]);
+                        } catch (Exception e) {
+                            servicio = false;
+                        }
+                        if (!servicio) {
+                            int id;
                             try {
                                 id = Integer.parseInt(parts[2]);
                             } catch (Exception e) {
@@ -163,7 +164,7 @@ public class App {
 
                             String afterName = input.substring(ultimaComilla + 1).trim();
                             String[] tail = afterName.split(" ");
-                            
+
                             if (tail.length < 2) {
                                 System.out.println("Fail: invalid parameters");
                                 break;
@@ -181,16 +182,16 @@ public class App {
                             ServiceType tipoServicio;
                             switch (parts[3].toUpperCase()) {
                                 case "TRANSPORT":
-                                        tipoServicio = ServiceType.TRANSPORT;
-                                        break;
+                                    tipoServicio = ServiceType.TRANSPORT;
+                                    break;
                                 case "SHOW":
-                                        tipoServicio = ServiceType.SHOW;
-                                        break;
+                                    tipoServicio = ServiceType.SHOW;
+                                    break;
                                 case "INSURANCE":
-                                        tipoServicio = ServiceType.INSURANCE;
-                                        break;
+                                    tipoServicio = ServiceType.INSURANCE;
+                                    break;
                                 default:
-                                        throw new Exception("Servicio no existente");
+                                    throw new Exception("Servicio no existente");
                             }
                             service = new Service(fechaServicio, tipoServicio);
                         }
@@ -209,7 +210,7 @@ public class App {
                             } else System.out.println("Fail: product not added\n");
                         }
                     } catch (Exception e) {
-                            System.out.println("Fail: Product not added\n");
+                        System.out.println("Fail: Product not added\n");
                     }
                 }
                 case "addfood" -> {
@@ -252,61 +253,35 @@ public class App {
                 }
                 case "update" -> {
                     try {
-                        boolean servicio = false;
-                        int id = 0;
-                        String idSer = null;
-                        try {
-                            id = Integer.parseInt(parts[2]);
-                        } catch (Exception e) {
-                            servicio = true;
-                            idSer = parts[2];
-
-                        }
+                        int id = Integer.parseInt(parts[2]);
                         String field = parts[3].toUpperCase();
                         String newValue;
-                        if (servicio) {
-                            if (field.equals("NAME")) {
-                                StringBuilder sb = new StringBuilder();
-                                for (int i = 4; i < parts.length; i++) {
-                                    if (i > 4) sb.append(" ");
-                                    sb.append(parts[i].replace("\"", ""));
-                                }
-                                newValue = sb.toString();
-                            } else {
-                                newValue = parts[4];
+
+                        if (field.equals("NAME")) {
+                            StringBuilder sb = new StringBuilder();
+                            for (int i = 4; i < parts.length; i++) {
+                                if (i > 4) sb.append(" ");
+                                sb.append(parts[i].replace("\"", ""));
                             }
-
-                            Productos product = catalog.getProductById(id);
-
-                            if (product == null) {
-                                System.out.println("Fail: product not found\n");
-                                break;
-                            }
-
-                            boolean ok = catalog.updateField(id, field, newValue);
-
-                            if (ok) {
-                                System.out.println(product.toString());
-                                System.out.println("prod update: ok\n");
-                            } else System.out.println("Fail: invalid value or field\n");
+                            newValue = sb.toString();
                         } else {
-                            boolean ok = false;
-                            Service s = null;
-                            if (!idSer.toUpperCase().endsWith("S")) {
-                                System.out.println("Fail: invalid id format");
-                            } else {
-                                s = catalog.getProductByIdServicio(idSer);
-                                if (s == null) {
-                                    System.out.println("Fail: product not found\n");
-                                } else {
-                                    ok = catalog.updateFieldService(idSer, field, parts[4]);
-                                }
-                            }
-                            if (ok) {
-                                System.out.println(s.toString());
-                                System.out.println("prod update: ok\n");
-                            } else System.out.println("Fail: invalid value or field\n");
+                            newValue = parts[4];
+                        }
 
+                        Productos product = catalog.getProductById(id);
+
+                        if (product == null) {
+                            System.out.println("Fail: product not found\n");
+                            break;
+                        }
+
+                        boolean ok = catalog.updateField(id, field, newValue);
+
+                        if (ok) {
+                            System.out.println(product.toString());
+                            System.out.println("prod update: ok\n");
+                        } else {
+                            System.out.println("Fail: invalid value or field\n");
                         }
 
                     } catch (Exception e) {
@@ -315,36 +290,46 @@ public class App {
                 }
 
                 case "remove" -> {
-                    int id = 0;
-                    Productos removed = null;
-                    String idSer = "";
-                    Service removedSer = null;
-                    boolean servicio = false;
-                    try {
-                    id = Integer.parseInt(parts[2]);
-                    removed = catalog.getProductById(id);
-                    } catch (Exception e) {
-                        servicio = true;
-                        idSer = parts[2];
-                        removedSer = catalog.getProductByIdServicio(idSer);
-                    }
-                    if (!servicio) {
-                        if (catalog.remove(id)) {
-                            System.out.println(removed.toString());
-                            System.out.println("prod remove: ok");
+                    String idInput = parts[2];
+                    boolean isService = idInput.toUpperCase().endsWith("S");
+
+                    if (isService) {
+                        // Lógica para SERVICIOS
+                        Service toRemove = catalog.getProductByIdServicio(idInput);
+                        if (toRemove != null) {
+                            String serviceInfo = toRemove.toString();
+                            // CORRECCIÓN: Llamamos a removeService, que acepta el String "1S"
+                            if (catalog.removeService(idInput)) {
+                                System.out.println(serviceInfo);
+                                System.out.println("prod remove: ok");
+                            } else {
+                                System.out.println("Fail: product not removed");
+                            }
                         } else {
-                            System.out.println("Fail: product not removed");
+                            System.out.println("Fail: product not found");
                         }
-                        System.out.println();
                     } else {
-                        if (catalog.removeService(idSer)) {
-                            System.out.println(removedSer.toString());
-                            System.out.println("prod remove: ok");
-                        } else {
-                            System.out.println("Fail: product not removed");
+                        // Lógica para PRODUCTOS (numéricos)
+                        try {
+                            int idProd = Integer.parseInt(idInput);
+                            Productos toRemove = catalog.getProductById(idProd);
+                            if (toRemove != null) {
+                                String productInfo = toRemove.toString();
+                                // Aquí usamos remove(int), que es para Productos
+                                if (catalog.remove(idProd)) {
+                                    System.out.println(productInfo);
+                                    System.out.println("prod remove: ok");
+                                } else {
+                                    System.out.println("Fail: product not removed");
+                                }
+                            } else {
+                                System.out.println("Fail: product not found");
+                            }
+                        } catch (NumberFormatException e) {
+                            System.out.println("Fail: invalid ID format");
                         }
-                        System.out.println();
-                    } 
+                    }
+                    System.out.println();
                 }
                 case "addmeeting" -> {
                     int id;

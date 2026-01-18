@@ -1,16 +1,26 @@
 package es.upm.etsisi.poo;
 
+import jakarta.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 
+@Entity
 public class ProductosPersonalizables extends Product {
 
-    private final int maxTextos;
-    private ArrayList<String> textos;
-    private Category categoria;
+    private int maxTextos;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "producto_personalizado_textos", joinColumns = @JoinColumn(name = "producto_id"))
+    @Column(name = "texto")
+    private List<String> textos = new ArrayList<>();
+
+    // Constructor vacío obligatorio para Hibernate
+    protected ProductosPersonalizables() {
+        super();
+    }
 
     public ProductosPersonalizables(int id, String nombre, double precio, Category categoria, int maxTextos){
         super(id, nombre, precio, categoria);
-        this.categoria = categoria;
         if(maxTextos < 0){
             throw new IllegalArgumentException("Número de textos negativo");
         }
@@ -22,14 +32,16 @@ public class ProductosPersonalizables extends Product {
         return maxTextos;
     }
 
-    public ArrayList<String> getTextos() {
+    public List<String> getTextos() {
         return textos;
     }
 
+    // Método fundamental para añadir personalizaciones
     public boolean addTexto(String texto){
         if(texto == null || texto.isBlank()){
-            throw new IllegalArgumentException("No se puede añadir un texto null.");
+            return false;
         }
+        if(textos == null) textos = new ArrayList<>(); // Seguridad para Hibernate
         if(textos.size() >= maxTextos) {
             return false;
         }
@@ -37,6 +49,7 @@ public class ProductosPersonalizables extends Product {
         return true;
     }
 
+    // Este método es necesario para crear las copias en el Ticket sin perder el precio base
     public double getPrecioBase() {
         return super.getPrecio();
     }
@@ -44,19 +57,20 @@ public class ProductosPersonalizables extends Product {
     @Override
     public double getPrecio(){
         double precioBase = super.getPrecio();
-        double recargo = 0.1 * precioBase * textos.size();
+        // Recargo del 10% por cada texto añadido
+        double recargo = 0.1 * precioBase * (textos != null ? textos.size() : 0);
         return recargo + precioBase;
     }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-
         sb.append("{class:ProductPersonalized, id:")
                 .append(getId())
                 .append(", name:'")
                 .append(getNombre())
                 .append("', category:")
-                .append(categoria)
+                .append(getCategoria())
                 .append(", price:")
                 .append(getPrecio())
                 .append(", máximo de textos:")
@@ -70,12 +84,7 @@ public class ProductosPersonalizables extends Product {
             }
             sb.append("]");
         }
-
         sb.append("}");
-
         return sb.toString();
-    }
-    public Category getCategoria(){
-        return categoria;
     }
 }

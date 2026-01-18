@@ -1,11 +1,17 @@
 package es.upm.etsisi.poo;
 
-public abstract class Productos {
+import jakarta.persistence.*;
 
-    protected final int id;
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED) // Estrategia recomendada en el Tema 5
+@Table(name = "productos")
+public abstract class Productos {
+    @Id
+    protected int id; // El ID que ya tenías
     protected String nombre;
     protected double precio;
 
+    protected Productos() {} // Obligatorio para Hibernate
 
     public Productos(int id, String nombre, double precio) {
          this.id = id;
