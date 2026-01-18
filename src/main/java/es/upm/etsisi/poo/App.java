@@ -30,7 +30,7 @@ public class App {
         ticket = new Ticket(ticketId, cashId);
         listCash = new cashController();
 
-        // Inicialización (lectura de ficheros, etc.)
+        
         try {
             if (args.length > 0) {
                 String nombreFichero = args[0];
@@ -109,7 +109,7 @@ public class App {
                         "  ticket print <ticketId> <cashId>\n" +
                         "  ticket list \n"+
                         "  prod add ([<id>] \"<name>\" <category> <price> [<maxPers>]) || (<expiration:yyyy-MM-dd> <category>) \n" +
-                        "  prod update <id> NAME|CATEGORY|PRICE <value>\n" +
+                        "  prod update (<id> NAME|CATEGORY|PRICE <value>) || (<id> SERVICETYPE|EXPIRATION <value>) \n" +
                         "  prod addFood [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n"+
                         "  prod addMeeting [<id>] \"<name>\" <price> <expiration:yyyy-MM-dd> <max_people>\n"+
                         "  prod list\n" +
@@ -222,7 +222,7 @@ public class App {
                             System.out.println("Nombre no válido");
                             return;
                         }
-                        String name = input.substring(primerasComillas + 1, ultimasComillas);//intervalo del nombre
+                        String name = input.substring(primerasComillas + 1, ultimasComillas);
                         String [] resto = input.substring(ultimasComillas + 1).trim().split(" ");
                         if(resto.length != 3){
                             System.out.println("Parámetros no válidos");
@@ -299,7 +299,7 @@ public class App {
                                 if (s == null) {
                                     System.out.println("Fail: product not found\n");
                                 } else {
-                                    ok = catalog.updateFieldService(idSer, parts[2], parts[3]);
+                                    ok = catalog.updateFieldService(idSer, field, parts[4]);
                                 }
                             }
                             if (ok) {
@@ -356,7 +356,7 @@ public class App {
                             System.out.println("Nombre no válido");
                             return;
                         }
-                        String name = input.substring(primerasComillas + 1, ultimasComillas);//intervalo del nombre
+                        String name = input.substring(primerasComillas + 1, ultimasComillas);
                         String [] resto = input.substring(ultimasComillas + 1).trim().split(" ");
                         if(resto.length != 3){
                             System.out.println("Parámetros no válidos");
@@ -456,7 +456,7 @@ public class App {
                         for (int i = 6; i < parts.length; i++) {
                             String param = parts[i];
                             if (param.startsWith("--p")) {
-                                String txt = param.substring(3);  // elimina "--p"
+                                String txt = param.substring(3);  
                                 nuevosTextos.add(txt);
                             }
                         }
@@ -567,7 +567,7 @@ public class App {
                             case 'c' -> printer = new printerCombinado();
                             default -> {
                                 System.out.println("Empresa debe usar -s o -c");
-                                printer = new printerCombinado(); // Default printer
+                                printer = new printerCombinado(); 
                             }
                         }
 
@@ -683,8 +683,7 @@ public class App {
                         return;
                     }
                     List<abstractTicket> ticketsCash = cash.getTickets();
-                    ticketsCash.sort(Comparator.comparing(abstractTicket::getTicketId)); //para ordenar por id
-                    System.out.println("Tickets:");
+                    ticketsCash.sort(Comparator.comparing(abstractTicket::getTicketId));
                     for(abstractTicket t : ticketsCash){
                         System.out.println(t.getTicketId()+"->"+t.getState());
                     }

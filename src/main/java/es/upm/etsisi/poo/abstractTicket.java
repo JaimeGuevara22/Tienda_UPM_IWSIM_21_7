@@ -93,7 +93,7 @@ public abstract class abstractTicket {
     public boolean removeItem(int id) {
         for (int i = 0; i < contador; i++) {
             if (items[i].getId() == id) {
-                items[i] = items[contador - 1]; // Reemplazamos por el último
+                items[i] = items[contador - 1]; 
                 items[contador - 1] = null;
                 contador--;
                 return true;
