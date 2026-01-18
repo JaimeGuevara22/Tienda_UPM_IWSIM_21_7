@@ -252,35 +252,61 @@ public class App {
                 }
                 case "update" -> {
                     try {
-                        int id = Integer.parseInt(parts[2]);
+                        boolean servicio = false;
+                        int id = 0;
+                        String idSer = null;
+                        try {
+                            id = Integer.parseInt(parts[2]);
+                        } catch (Exception e) {
+                            servicio = true;
+                            idSer = parts[2];
+
+                        }
                         String field = parts[3].toUpperCase();
                         String newValue;
-
-                        if (field.equals("NAME")) {
-                            StringBuilder sb = new StringBuilder();
-                            for (int i = 4; i < parts.length; i++) {
-                                if (i > 4) sb.append(" ");
-                                sb.append(parts[i].replace("\"", ""));
+                        if (servicio) {
+                            if (field.equals("NAME")) {
+                                StringBuilder sb = new StringBuilder();
+                                for (int i = 4; i < parts.length; i++) {
+                                    if (i > 4) sb.append(" ");
+                                    sb.append(parts[i].replace("\"", ""));
+                                }
+                                newValue = sb.toString();
+                            } else {
+                                newValue = parts[4];
                             }
-                            newValue = sb.toString();
+
+                            Productos product = catalog.getProductById(id);
+
+                            if (product == null) {
+                                System.out.println("Fail: product not found\n");
+                                break;
+                            }
+
+                            boolean ok = catalog.updateField(id, field, newValue);
+
+                            if (ok) {
+                                System.out.println(product.toString());
+                                System.out.println("prod update: ok\n");
+                            } else System.out.println("Fail: invalid value or field\n");
                         } else {
-                            newValue = parts[4];
-                        }
+                            boolean ok = false;
+                            Service s = null;
+                            if (!idSer.toUpperCase().endsWith("S")) {
+                                System.out.println("Fail: invalid id format");
+                            } else {
+                                s = catalog.getProductByIdServicio(idSer);
+                                if (s == null) {
+                                    System.out.println("Fail: product not found\n");
+                                } else {
+                                    ok = catalog.updateFieldService(idSer, parts[2], parts[3]);
+                                }
+                            }
+                            if (ok) {
+                                System.out.println(s.toString());
+                                System.out.println("prod update: ok\n");
+                            } else System.out.println("Fail: invalid value or field\n");
 
-                        Productos product = catalog.getProductById(id);
-
-                        if (product == null) {
-                            System.out.println("Fail: product not found\n");
-                            break;
-                        }
-
-                        boolean ok = catalog.updateField(id, field, newValue);
-
-                        if (ok) {
-                            System.out.println(product.toString());
-                            System.out.println("prod update: ok\n");
-                        } else {
-                            System.out.println("Fail: invalid value or field\n");
                         }
 
                     } catch (Exception e) {
@@ -416,7 +442,7 @@ public class App {
                             System.out.println("Ticket add: Error - item not found");
                             break;
                         }
-                        if (!(item instanceof  Productos prod)){
+                        if (!(item instanceof Productos)){
                             System.out.println("Error elemento inválido.");
                         }
                         Productos prod = (Productos) item;
@@ -563,9 +589,13 @@ public class App {
                     System.out.println();
                 }
                 case "print" -> {
+                    if (ticket instanceof ticketEmpresa empresa) {
+                        empresa.close();
+                    } else ticket.close();
                     ticket.printTicket();
                     System.out.println("ticket print: ok");
                     System.out.println();
+
                 }
                 case "list" -> {
                     if(listTicket.isEmpty()){
