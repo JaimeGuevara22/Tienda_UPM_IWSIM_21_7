@@ -107,24 +107,6 @@ public class ProductCatalog {
         }
         return false;
     }
-
-    public boolean removeService(String id) {
-        
-        if (id == null || !id.endsWith("S")) {
-            return false;
-        }
-        for (int i = 0; i < servicios.length; i++) {
-            if (servicios[i] != null && servicios[i].getServiceId().equalsIgnoreCase(id)) {
-                for (int j = i + 1; i < servicios.length; i++ ) {
-                    servicios[j - 1] = servicios[j];
-                }
-                contador--;
-                return true;
-            }
-        }
-        return false;
-    }
-
     public boolean updateField(int id, String field, String value) {
         Productos p = getProductById(id);
             if (p == null) return false;
@@ -163,7 +145,7 @@ public class ProductCatalog {
     public void listProducts() {
         System.out.println("Catalogo servicios");
         for (Service service : servicios) {
-            if (servicios != null) {
+            if (service != null) {
                 System.out.println(service.toString());
             }
         }
@@ -173,14 +155,5 @@ public class ProductCatalog {
                 System.out.println(product.toString());
             }
         }
-    }
-
-    public boolean addTextToProduct(int id, String texto) {// no necesario tenemos otro igual en productosPersonalizables
-        Productos p = getProductById(id);
-        if(p instanceof ProductosPersonalizables pp){
-            pp.addTexto(texto);
-            return true;
-        }
-        return false;
     }
 }

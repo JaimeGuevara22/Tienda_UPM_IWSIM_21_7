@@ -1,6 +1,9 @@
 package es.upm.etsisi.poo;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.util.Date;
 
 public class Service {
     private static int sec = 1;
@@ -35,6 +38,7 @@ public class Service {
     }
     @Override
     public String toString() {
-        return "{class:ProductService, expiration:" + expirationDate + " category:" + type + "}";
+        Date date = Date.from(expirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return "{class:ProductService, category: " +type+" expiration:" + date + "}";
     }
 }

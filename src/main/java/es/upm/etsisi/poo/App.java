@@ -141,7 +141,6 @@ public class App {
                     Service service = null;
                     try {
                         LocalDate fechaServicio = null;
-                        // Id siempre es la segunda palabra
                         try {
                                 fechaServicio = LocalDate.parse(parts[2]);
                             } catch (Exception e) {
@@ -253,7 +252,6 @@ public class App {
                         String field = parts[3].toUpperCase();
                         String newValue;
 
-                        // Si el NAME tiene espacios o comillas
                         if (field.equals("NAME")) {
                             StringBuilder sb = new StringBuilder();
                             for (int i = 4; i < parts.length; i++) {
