@@ -36,7 +36,7 @@ public class ProductosPersonalizables extends Product {
         return textos;
     }
 
-    // Método fundamental para añadir personalizaciones
+
     public boolean addTexto(String texto){
         if(texto == null || texto.isBlank()){
             return false;
@@ -49,7 +49,7 @@ public class ProductosPersonalizables extends Product {
         return true;
     }
 
-    // Este método es necesario para crear las copias en el Ticket sin perder el precio base
+
     public double getPrecioBase() {
         return super.getPrecio();
     }

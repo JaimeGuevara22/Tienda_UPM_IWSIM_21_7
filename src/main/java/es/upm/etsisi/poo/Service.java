@@ -8,15 +8,14 @@ import java.time.LocalDate;
 public class Service {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Hibernate gestiona el ID (1, 2, 3...)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private LocalDate expirationDate;
 
-    @Enumerated(EnumType.STRING) // Guarda el nombre del ENUM (ej: "REPAIR") en lugar del número
+    @Enumerated(EnumType.STRING)
     private ServiceType type;
 
-    // Constructor protegido necesario para que Hibernate recupere los datos del disco
     protected Service() {}
 
     public Service(LocalDate expirationDate, ServiceType type) {
@@ -25,12 +24,9 @@ public class Service {
         }
         this.expirationDate = expirationDate;
         this.type = type;
-        // El ID no se asigna aquí, se genera al hacer session.persist()
+
     }
 
-    /**
-     * Devuelve el ID formateado como pide el enunciado (ej: "1S").
-     */
     public String getServiceId() {
         return id + "S";
     }
@@ -52,8 +48,6 @@ public class Service {
 
     @Override
     public String toString() {
-        // Formato exacto para el catálogo: {class:ProductService, category: TYPE, expiration: YYYY-MM-DD}
-        // Nota: He incluido el ID para facilitar el seguimiento en consola
         return "{class:ProductService, id: " + getServiceId() +
                 ", category: " + type +
                 ", expiration: " + expirationDate + "}";

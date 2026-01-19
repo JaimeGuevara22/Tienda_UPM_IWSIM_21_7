@@ -6,7 +6,6 @@ import java.util.List;
 
 public class ProductCatalog {
 
-    // Ya no necesitamos los arrays ni los contadores manuales
     public ProductCatalog() {
     }
 
@@ -17,7 +16,6 @@ public class ProductCatalog {
     }
 
     public Service getProductByIdServicio(String id) {
-        // Como el ID de servicio en DB es numérico (ej: 1), quitamos la 'S' para buscar
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             int numericId = Integer.parseInt(id.replace("S", "").replace("s", ""));
             return session.get(Service.class, numericId);
@@ -26,7 +24,6 @@ public class ProductCatalog {
         }
     }
 
-    // Cambia Product p por Productos p
     public boolean addProduct(Productos p) {
         Session session = null;
         Transaction tx = null;
@@ -34,7 +31,6 @@ public class ProductCatalog {
             session = HibernateUtil.getSessionFactory().openSession();
             tx = session.beginTransaction();
 
-            // Verificamos si el ID ya existe antes de persistir
             if (session.get(Productos.class, p.getId()) != null) {
                 return false;
             }
@@ -62,7 +58,6 @@ public class ProductCatalog {
         }
     }
 
-    // Para PRODUCTOS (Recibe int)
     public boolean remove(int id) {
         Transaction tx = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -80,7 +75,6 @@ public class ProductCatalog {
         }
     }
 
-    // Para SERVICIOS (Recibe String)
     public boolean removeService(String id) {
         if (id == null || !id.toUpperCase().endsWith("S")) return false;
 
@@ -125,7 +119,6 @@ public class ProductCatalog {
 
     public boolean updateField(int id, String field, String value) {
         Transaction tx = null;
-        // Abrimos sesión para obtener el objeto real de la base de datos
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Productos p = session.get(Productos.class, id);
             if (p == null) return false;
@@ -145,14 +138,12 @@ public class ProductCatalog {
                             prod.setCategoria(Category.valueOf(value.toUpperCase()));
                         } catch (IllegalArgumentException e) { return false; }
                     } else {
-                        return false; // Solo los Product tienen categoría, no los Food/Meetings base
+                        return false;
                     }
                 }
                 default -> { return false; }
             }
 
-            // Al hacer commit, Hibernate detecta que el objeto 'p' ha cambiado
-            // y lanza automáticamente el UPDATE a la base de datos local.
             tx.commit();
             return true;
         } catch (Exception e) {

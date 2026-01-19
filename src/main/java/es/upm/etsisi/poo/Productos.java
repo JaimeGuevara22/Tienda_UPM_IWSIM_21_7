@@ -7,11 +7,11 @@ import jakarta.persistence.*;
 @Table(name = "productos")
 public abstract class Productos {
     @Id
-    protected int id; // El ID que ya tenías
+    protected int id;
     protected String nombre;
     protected double precio;
 
-    protected Productos() {} // Obligatorio para Hibernate
+    protected Productos() {}
 
     public Productos(int id, String nombre, double precio) {
          this.id = id;

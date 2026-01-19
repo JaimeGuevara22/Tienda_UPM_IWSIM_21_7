@@ -1,15 +1,15 @@
 package es.upm.etsisi.poo;
 
-import jakarta.persistence.*; // Si User también es una entidad
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 
-@MappedSuperclass // Esta anotación indica que es una clase padre cuyos campos se heredan en la DB
+@MappedSuperclass
 public abstract class User {
     protected String nombre;
     protected String email;
 
-    // AÑADE ESTO:
+
     protected User() {
     }
 

@@ -1,19 +1,17 @@
 package es.upm.etsisi.poo;
 
-import jakarta.persistence.*; // Añade esto
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 @Entity
-@Table(name = "cashiers") // Si quieres guardar los cajeros en la DB
+@Table(name = "cashiers")
 public class Cash extends User {
 
     @Id
     private String cashId;
 
-    // Usamos @Transient para que esta lista NO intente guardarse en la DB
-    // y así evitar el error de JdbcType que teníamos antes.
     @Transient
     private List<abstractTicket> tickets = new ArrayList<>();
 
@@ -55,7 +53,7 @@ public class Cash extends User {
         return "Cash{identifier= '" + cashId + "', name='" + this.getNombre() + "', email= '" + this.getEmail() + "'}";
     }
 
-    // Cambiado a List para ser compatible con lo que espera el resto del sistema
+
     public List<abstractTicket> getTickets() {
         return tickets;
     }

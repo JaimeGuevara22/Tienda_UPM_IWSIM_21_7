@@ -6,7 +6,6 @@ public class printerSoloServicios implements ticketPrinter {
         System.out.println("Ticket: " + ticket.getTicketId());
         System.out.println("Services included: ");
 
-        // Usamos el nuevo método que devuelve la lista y la recorremos
         for (Service s : ticket.getServicesList()) {
             System.out.println("  " + s.toString());
         }

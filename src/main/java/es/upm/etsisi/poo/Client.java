@@ -1,17 +1,17 @@
 package es.upm.etsisi.poo;
 
-import jakarta.persistence.*; // Importante para usar anotaciones [cite: 168]
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity // Indica que esta clase se guardará en la base de datos
+@Entity
 @Table(name = "clientes")
 public class Client extends User {
 
-    @Enumerated(EnumType.STRING) // Guarda el Enum como texto (PERSONAL/BUSINESS)
+    @Enumerated(EnumType.STRING)
     private ClientType clientType;
 
-    @Id // Define el NIF/DNI como clave primaria
+    @Id
     private String id;
 
     private String cashUp;
@@ -20,7 +20,7 @@ public class Client extends User {
     @JoinColumn(name = "client_id")
     private List<abstractTicket> tickets = new ArrayList<>();
 
-    // Hibernate requiere un constructor vacío (protegido o público) [cite: 170]
+
     protected Client() {
         super();
     }

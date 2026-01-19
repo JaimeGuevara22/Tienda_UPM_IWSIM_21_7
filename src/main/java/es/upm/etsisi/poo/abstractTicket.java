@@ -9,19 +9,19 @@ import java.util.List;
 import java.util.Random;
 
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS) // Esta es la clave para clases abstractas
-public abstract class abstractTicket { // Eliminado el <T>
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class abstractTicket {
 
     @Id
     protected String ticketId;
 
-    protected String cashId; // Añadido para persistencia
+    protected String cashId;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "ticket_id")
     protected List<TicketItem> itemsList = new ArrayList<>();
 
-    @Transient // Esto no se guarda en la DB, solo vive en memoria
+    @Transient
     protected static final HashSet<String> idsUsados = new HashSet<>();
 
     @Transient
@@ -105,7 +105,7 @@ public abstract class abstractTicket { // Eliminado el <T>
     public int getItemsCount() {
         return itemsList.size();
     }
-    // En abstractTicket.java
+
     public List<TicketItem> getItemsList() {
         return itemsList;
     }

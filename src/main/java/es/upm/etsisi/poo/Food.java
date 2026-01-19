@@ -3,10 +3,9 @@ package es.upm.etsisi.poo;
 import jakarta.persistence.Entity;
 import java.time.LocalDate;
 
-@Entity // Fundamental para que Hibernate cree la tabla o discriminador
+@Entity
 public class Food extends ProductEvents {
 
-    // Constructor vacío protegido: Obligatorio para Hibernate
     protected Food() {
         super();
     }
@@ -21,7 +20,6 @@ public class Food extends ProductEvents {
 
     @Override
     public String toString() {
-        // Quitamos la llave extra si super.toString() ya la incluye al final
-        return "{Class:Food" + super.toString();
+        return super.toString();
     }
 }
